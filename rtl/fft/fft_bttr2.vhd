@@ -10,7 +10,7 @@
 -- Tool Versions: 
 -- Description: pipelined butterfly unit
 -- 
--- Dependencies: dig_top_pckg
+-- Dependencies: fft_pckg
 -- 
 -- Revision:
 -- Revision 0.01 - File Created
@@ -24,7 +24,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.MATH_REAL.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 LIBRARY xil_defaultlib;
-USE xil_defaultlib.dig_top_pckg.ALL;
+USE xil_defaultlib.fft_pckg.ALL;
 
 
 ENTITY fft_bttr2 IS

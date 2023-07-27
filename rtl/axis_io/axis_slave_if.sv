@@ -37,7 +37,6 @@ module axis_slave_if(
     input  logic [S_TDATA_WDT-1:0] S_AXIS_TDATA,
 
     input  logic S_AXIS_TLAST,
-    input  logic [S_TID_WDT-1:0] S_AXIS_TID,
     input  logic S_AXIS_TVALID,	
     output logic S_AXIS_TREADY,
     

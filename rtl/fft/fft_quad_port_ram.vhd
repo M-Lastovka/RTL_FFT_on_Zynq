@@ -24,7 +24,7 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 LIBRARY xil_defaultlib;
-USE xil_defaultlib.dig_top_pckg.ALL;
+USE xil_defaultlib.fft_pckg.ALL;
 
 
 ENTITY fft_quad_port_ram IS

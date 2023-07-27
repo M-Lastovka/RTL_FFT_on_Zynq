@@ -2,7 +2,7 @@
 -- Create Date: 07/17/2021 05:27:38 PM:
 -- Module Name: fft_twiddle_LUT - rtl
 -- Description: LUT for roots of unity, a.k.a twiddle factors
--- Dependencies: dig_top_pckg 
+-- Dependencies: fft_pckg 
 -- Additional Comments: This code is auto-generated, do NOT edit manually! 
 ----------------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 LIBRARY xil_defaultlib;
-USE xil_defaultlib.dig_top_pckg.ALL;
+USE xil_defaultlib.fft_pckg.ALL;
 
 
 ENTITY fft_twiddle_LUT IS

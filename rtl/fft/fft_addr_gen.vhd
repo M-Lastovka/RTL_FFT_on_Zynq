@@ -10,7 +10,7 @@
 -- Tool Versions: 
 -- Description: address generation unit for even and odd data + twiddle factors
 -- 
--- Dependencies: dig_top_pckg
+-- Dependencies: fft_pckg
 -- 
 -- Revision:
 -- Revision 0.01 - File Created
@@ -25,7 +25,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 USE IEEE.MATH_REAL.ALL;
 LIBRARY xil_defaultlib;
-USE xil_defaultlib.dig_top_pckg.ALL;
+USE xil_defaultlib.fft_pckg.ALL;
 
 
 

@@ -25,7 +25,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 USE IEEE.MATH_REAL.ALL;
 LIBRARY xil_defaultlib;
-USE xil_defaultlib.dig_top_pckg.ALL;
+USE xil_defaultlib.fft_pckg.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values

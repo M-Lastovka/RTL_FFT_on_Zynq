@@ -22,8 +22,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import fp_pckg::*;
-import dnn_pckg::*;
 import axi_stream_pckg::*;
 
 module axis_master_if(
@@ -35,7 +33,6 @@ module axis_master_if(
     //AXI stream master interface
     output  logic [M_TDATA_WDT-1:0] M_AXIS_TDATA,
     output  logic M_AXIS_TLAST,
-    output  logic [M_TID_WDT-1:0] M_AXIS_TID,
     output  logic M_AXIS_TVALID,	
     input   logic M_AXIS_TREADY,
     
