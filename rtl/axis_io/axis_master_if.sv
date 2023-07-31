@@ -37,16 +37,19 @@ module axis_master_if(
     input   logic M_AXIS_TREADY,
     
     //outputs memory interface
-    output  logic [ACTIV_MEM_ADDR_WDT-1:0]  outputs_ext_mem_addr,
-    input   logic [VLW_WDT-1:0]             outputs_ext_mem_data,
+    output  logic [C_FFT_SIZE_LOG2-1:0]  m_axis_if_addr,
+    input   logic [C_SAMPLE_WDT-1:0]     data_re_0_out,
+    input   logic [C_SAMPLE_WDT-1:0]     data_im_0_out,
 
     //control
-    output  logic m_if_buffer_ready,
-    input   logic outputs_tx_start,
-    output  logic outputs_tx_done,
-    output  logic outputs_tx_busy
+    output  logic pop,
+    input   logic tx_ready,
+    output  logic tx_done,
+    output  logic m_axis_if_busy
 
     );
+
+    logic [VLW_WDT-1:0] outputs_ext_mem_data;
 
     //write side
     logic fifo_full;
@@ -67,8 +70,6 @@ module axis_master_if(
     logic [M_TDATA_WDT-1:0] fifo_out;
     logic [M_TDATA_WDT-1:0] fifo_in;
 
-    logic [M_TID_WDT-1:0] m_tid;
-
     logic m_rd_done;
 
     logic [$clog2(M_IF_BUFFER_SIZE):0] m_if_buffer_cnt;
@@ -76,7 +77,7 @@ module axis_master_if(
     logic m_if_buffer_wr;
     logic m_if_buffer_shift;
     logic m_if_buffer_valid;
-    logic m_if_buffer_ready_i;
+    logic pop_i;
     logic [M_TDATA_WDT-1:0] m_if_buffer_unpack[M_IF_BUFFER_SIZE-1:0];
     logic m_axis_tvalid_i;
     logic m_axis_tlast_i;
@@ -105,13 +106,13 @@ module axis_master_if(
     //BUFFER FOR WRITING TO MEMORY---------------------------------
     //-------------------------------------------------------------
 
-    //m_if_buffer_ready reads from the activations memory and increments the address
-    assign m_if_buffer_ready = m_wr_curr_state == M_WR_INIT | (m_if_buffer_cnt == 1 & !m_if_buffer_wr_done & !fifo_full); 
+    //pop reads from the activations memory and increments the address
+    assign pop = m_wr_curr_state == M_WR_INIT | (m_if_buffer_cnt == 1 & !m_if_buffer_wr_done & !fifo_full); 
     //we write to buffer at counter == max and fifo is being written or at init
-    assign m_if_buffer_wr    =  fifo_wr_en & m_if_buffer_cnt == (PU_WIND_SIZE/(M_TDATA_WDT/FP_WORD_WDT)) | m_wr_curr_state_i == M_WR_INIT; 
+    assign m_if_buffer_wr    =  fifo_wr_en & m_if_buffer_cnt == m_axis_if_addr | m_wr_curr_state_i == M_WR_INIT; 
     //we shift the buffer on fifo_wr_en
     assign m_if_buffer_shift =  fifo_wr_en & !m_if_buffer_wr;
-    assign m_if_buffer_done_c = m_if_buffer_cnt == (PU_WIND_SIZE/(M_TDATA_WDT/FP_WORD_WDT)) & m_if_buffer_wr_done & m_if_buffer_wr; //no more writes and reads to and from the IF buffer needed
+    assign m_if_buffer_done_c = m_if_buffer_cnt == m_axis_if_addr & m_if_buffer_wr_done & m_if_buffer_wr; //no more writes and reads to and from the IF buffer needed
     assign m_if_buffer_done = m_if_buffer_done_c | m_if_buffer_done_i; //final flag is OR result of latched flip flop value and combinational value => needed if there is fifo stall on last write
 
     always_ff @(posedge clk) begin : m_if_buffer_ctrl
@@ -133,7 +134,7 @@ module axis_master_if(
 
                 if(m_if_buffer_shift | m_if_buffer_wr) begin //increment counter
                     m_if_buffer_cnt <= m_if_buffer_cnt + 1;
-                    if(m_if_buffer_cnt == (PU_WIND_SIZE/(M_TDATA_WDT/FP_WORD_WDT))) //reset counter on max value
+                    if(m_if_buffer_cnt == m_axis_if_addr) //reset counter on max value
                         m_if_buffer_cnt <= 1;
                 end
 
@@ -151,16 +152,20 @@ module axis_master_if(
 
     always_ff @(posedge clk) begin : addr_gen //generate addresses for the activations memory and memory read done signal
         if(!rst_n) begin
-            outputs_ext_mem_addr <= OUTPUT_MEM_OFFSET;
+            m_axis_if_addr <= OUTPUT_MEM_OFFSET;
             
         end else begin
-            if(m_if_buffer_ready & m_wr_curr_state == M_WR_FIFO | m_wr_curr_state == M_WR_INIT) begin
-                outputs_ext_mem_addr <= outputs_ext_mem_addr + 1;
+            if(pop & m_wr_curr_state == M_WR_FIFO | m_wr_curr_state == M_WR_INIT) begin
+                m_axis_if_addr <= m_axis_if_addr + 1;
             end else if(m_wr_curr_state == M_WR_IDLE) begin
-                outputs_ext_mem_addr <= OUTPUT_MEM_OFFSET;
+                m_axis_if_addr <= OUTPUT_MEM_OFFSET;
             end
         end
     end
+
+    //left half is real part, right half is imag. part, sign extend to M_TDATA_WDT
+    assign outputs_ext_mem_data = {{{(M_TDATA_WDT-C_SAMPLE_WDT){data_re_0_out[C_SAMPLE_WDT-1]}}, data_re_0_out},
+                                   {{(M_TDATA_WDT-C_SAMPLE_WDT){data_im_0_out[C_SAMPLE_WDT-1]}}, data_im_0_out} }; 
 
     always_ff @(posedge clk) begin : m_if_buffer
         if(!rst_n) begin
@@ -194,7 +199,7 @@ module axis_master_if(
             m_wr_next_state = M_WR_IDLE;
 
             casez(m_wr_curr_state)
-                M_WR_IDLE : m_wr_next_state = outputs_tx_start ? M_WR_INIT : M_WR_IDLE; 
+                M_WR_IDLE : m_wr_next_state = tx_ready ? M_WR_INIT : M_WR_IDLE; 
                 M_WR_INIT : m_wr_next_state = M_WR_FIFO; 
                 M_WR_FIFO : m_wr_next_state = m_fifo_wr_done ? M_WR_WAIT : M_WR_FIFO; //everything has been read from memory and buffer is empty
                 M_WR_WAIT : m_wr_next_state = m_rd_done ? M_WR_IDLE : M_WR_WAIT; //wait for read fsm to finish
@@ -269,9 +274,6 @@ module axis_master_if(
             fifo_mem[fifo_wr_ptr] <= fifo_in;
     end
 
-    assign M_AXIS_TID = '0; //may be handy later
-    assign m_tid = '0;
-
     //generate tlast & tvalid
     assign m_axis_tlast_i  = m_rd_done;
     assign m_axis_tvalid_i = fifo_rd_en;
@@ -294,8 +296,8 @@ module axis_master_if(
     //-------------------------------------------------------------
 
     always_comb begin : status_flags
-        outputs_tx_busy = m_wr_curr_state != M_WR_IDLE | m_rd_curr_state != M_RD_IDLE;
-        outputs_tx_done = M_AXIS_TLAST;
+        m_axis_if_busy = m_wr_curr_state != M_WR_IDLE | m_rd_curr_state != M_RD_IDLE;
+        tx_done = M_AXIS_TLAST;
     end
 
     // synthesis translate_off
@@ -316,9 +318,9 @@ module axis_master_if(
 
     assert property (@(posedge clk) disable iff (!rst_n) (M_AXIS_TREADY & !M_AXIS_TVALID & m_rd_curr_state != M_RD_INIT |-> !fifo_rd_en));
 
-    assert property (@(posedge clk) disable iff (!rst_n) (m_wr_curr_state == M_WR_WAIT |-> outputs_ext_mem_addr == ACTIV_MEM_SIZE | M_IF_BUFFER_SIZE == 1));
+    assert property (@(posedge clk) disable iff (!rst_n) (m_wr_curr_state == M_WR_WAIT |-> m_axis_if_addr == OUTPUT_MEM_SIZE | M_IF_BUFFER_SIZE == 1));
 
-    assert property (@(posedge clk) disable iff (!rst_n) (m_if_buffer_ready |=> !m_if_buffer_ready | M_IF_BUFFER_SIZE == 1));
+    assert property (@(posedge clk) disable iff (!rst_n) (pop |=> !pop | M_IF_BUFFER_SIZE == 1));
 
     assert property (@(posedge clk) disable iff (!rst_n) (m_if_buffer_wr |=> !m_if_buffer_wr | M_IF_BUFFER_SIZE == 1));
 

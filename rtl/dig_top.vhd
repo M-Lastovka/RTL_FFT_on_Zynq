@@ -37,21 +37,21 @@ ENTITY dig_top IS
         -----------------------AXI stream memory to PL---------------------------
         
         S_AXIS_TREADY	: OUT std_logic;                                       --slave ready
-        S_AXIS_TDATA	: IN std_logic_vector(C_AXIS_DATA_WDT-1 DOWNTO 0);     --data in
+        S_AXIS_TDATA	: IN std_logic_vector(S_TDATA_WDT-1 DOWNTO 0);         --data in
         S_AXIS_TLAST	: IN std_logic;                                        --indicates boundary of last packet
         S_AXIS_TVALID	: IN std_logic;                                        --master initiate
         
         -----------------------AXI stream PL to memory---------------------------
         
         M_AXIS_TREADY	: IN  std_logic;                                        --slave ready
-        M_AXIS_TDATA	: OUT std_logic_vector(C_AXIS_DATA_WDT-1 DOWNTO 0);     --data in
+        M_AXIS_TDATA	: OUT std_logic_vector(M_TDATA_WDT-1 DOWNTO 0);         --data in
         M_AXIS_TLAST	: OUT std_logic;                                        --indicates boundary of last packet
         M_AXIS_TVALID	: OUT std_logic
   
   );
 END dig_top;
 
-ARCHITECTURE structural OF dig_top IS
+ARCHITECTURE  rtl OF dig_top IS
 
     --FFT block signals
     SIGNAL data_re_0_in             :    std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
@@ -83,16 +83,12 @@ ARCHITECTURE structural OF dig_top IS
                                                        -- = '0' - input samples are transmited two at a time 
     SIGNAL tx_single_ndouble_mode   :    std_logic;   -- = '1' - output samples are transmited one at a time through port 0
                                                        -- = '0' - output samples are transmited two at a time
-    SIGNAL burst_mode_en            :    std_logic;    --burst mode enable    
-    SIGNAL s_fifo_out_data_q        :    std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);          --FIFO output data
-    SIGNAL addr_0_i_in              :    std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
-    SIGNAL data_re_window_d         :    std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-    SIGNAL m_write_cnt_std          :    std_logic_vector(C_FFT_SPECTR_COUNT_LOG2-1 DOWNTO 0);
+    SIGNAL burst_mode_en            :    std_logic;    --burst mode enable 
     
-    SIGNAL addr_window_fnc_q        :    std_logic_vector(C_FFT_SAMPLE_COUNT_LOG2-1 DOWNTO 0);
-    SIGNAL window_read_en_q         :    std_logic;
-    SIGNAL window_sample_d          :    std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);	
-    
+    SIGNAL m_axis_if_busy           :    std_logic;   
+    SIGNAL m_axis_if_addr           :    std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+    SIGNAL s_axis_if_addr           :    std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+    SIGNAL s_axis_if_busy           :    std_logic;
     
     COMPONENT fft_dig_top IS
         PORT ( 
@@ -132,7 +128,7 @@ ARCHITECTURE structural OF dig_top IS
            tx_ack            : IN  std_logic;   --end tx transaction of this sample and move onto another
            pop               : IN  std_logic;   --memory read acknowledge signal, not used in burst mode
            tx_done           : IN  std_logic;   --all dft samples have been transmited
-           all_done          : OUT std_logic;    --everything is done
+           all_done          : OUT std_logic;   --everything is done
            
            ----------------------------status & IF config control---------------------
            
@@ -145,9 +141,73 @@ ARCHITECTURE structural OF dig_top IS
            
            );
     END COMPONENT fft_dig_top;
+
+    COMPONENT axis_master_if IS
+        PORT ( 
+            clk             : IN  std_logic;
+            rst_n           : IN  std_logic;
+            M_AXIS_TREADY	: IN  std_logic;                                        --slave ready
+            M_AXIS_TDATA	: OUT std_logic_vector(M_TDATA_WDT-1 DOWNTO 0);         --data in
+            M_AXIS_TLAST	: OUT std_logic;                                        --indicates boundary of last packet
+            M_AXIS_TVALID	: OUT std_logic;
+            m_axis_if_addr  : OUT std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+            data_re_0_out   : IN  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_0_out   : IN  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            pop             : OUT std_logic;
+            tx_ready        : IN  std_logic;
+            tx_done         : OUT std_logic;
+            m_axis_if_busy  : OUT std_logic
+           );
+    END COMPONENT axis_master_if;
+
+    COMPONENT axis_slave_if IS
+        PORT ( 
+            clk             : IN  std_logic;
+            rst_n           : IN  std_logic;
+            S_AXIS_TREADY	: OUT std_logic;                                        --slave ready
+            S_AXIS_TDATA	: IN  std_logic_vector(M_TDATA_WDT-1 DOWNTO 0);         --data in
+            S_AXIS_TLAST	: IN  std_logic;                                        --indicates boundary of last packet
+            S_AXIS_TVALID	: IN  std_logic;
+            s_axis_if_addr  : OUT std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+            data_re_0_in    : OUT std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_0_in    : OUT std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            push            : OUT std_logic;
+            comp_busy       : IN  std_logic;
+            m_axis_if_busy  : IN  std_logic;
+            rx_done         : OUT std_logic;
+            s_axis_if_busy  : OUT std_logic
+           );
+    END COMPONENT axis_slave_if;
     
     
 BEGIN
+
+    --fft block configuration
+    addr_1_in    <= (OTHERS => '0');
+    data_re_1_in <= (OTHERS => '0');
+    data_im_1_in <= (OTHERS => '0');
+
+    rx_ack       <= '0';
+    tx_ack       <= '0';
+
+    rx_single_ndouble_mode <= '1';
+    tx_single_ndouble_mode <= '1';
+    burst_mode_en          <= '1';
+
+    request <= s_axis_if_busy;
+
+    --FFT address arbitration
+    fft_addr_arbitr : process (s_axis_if_busy, s_axis_if_addr, m_axis_if_addr)
+    begin
+        if s_axis_if_busy = '1' then
+            addr_0_in <= s_axis_if_addr;
+        elsif m_axis_if_busy = '1' then
+            addr_0_in <= m_axis_if_addr;
+        else                
+            addr_0_in <= (others => '0');
+        end if;
+    end process;
+
 
     fft_block : fft_dig_top
         PORT MAP( 
@@ -183,6 +243,41 @@ BEGIN
            tx_single_ndouble_mode  => tx_single_ndouble_mode,                                   
            burst_mode_en           => burst_mode_en            
            
+        );
+
+    master_if : axis_master_if
+        PORT MAP( 
+            clk             => clk,
+            rst_n           => rst_n,
+            M_AXIS_TREADY	=> M_AXIS_TREADY,     --slave ready
+            M_AXIS_TDATA	=> M_AXIS_TDATA,     --data in
+            M_AXIS_TLAST	=> M_AXIS_TLAST,     --indicates boundary of last packet
+            M_AXIS_TVALID	=> M_AXIS_TVALID,
+            m_axis_if_addr  => m_axis_if_addr,
+            data_re_0_out   => data_re_0_out,
+            data_im_0_out   => data_im_0_out,
+            pop             => pop,
+            tx_ready        => tx_ready,
+            tx_done         => tx_done,
+            m_axis_if_busy  => m_axis_if_busy
+           );
+
+    slave_if : axis_slave_if
+        PORT MAP( 
+            clk             => clk,
+            rst_n           => rst_n,
+            S_AXIS_TREADY   => S_AXIS_TREADY,
+            S_AXIS_TDATA    => S_AXIS_TDATA,
+            S_AXIS_TLAST    => S_AXIS_TLAST,
+            S_AXIS_TVALID   => S_AXIS_TVALID,
+            s_axis_if_addr  => s_axis_if_addr,
+            data_re_0_in    => data_re_0_in,
+            data_im_0_in    => data_im_0_in,
+            push            => push,
+            comp_busy       => busy,
+            m_axis_if_busy  => m_axis_if_busy,
+            rx_done         => rx_done,
+            s_axis_if_busy  => s_axis_if_busy
            );
     
 

@@ -28,6 +28,11 @@ USE IEEE.NUMERIC_STD.ALL;
 
 PACKAGE fft_pckg IS
 
+    --AXI
+    CONSTANT S_TDATA_WDT        : natural := 32;
+    CONSTANT M_TDATA_WDT        : natural := 32;
+
+    --FFT
     CONSTANT C_FFT_SIZE_LOG2         : natural := 12;                      
     CONSTANT C_FFT_SIZE              : natural := 2**C_FFT_SIZE_LOG2;         --number of samples
     CONSTANT C_SAMPLE_WDT            : natural := 24;                         --bit width of real/imag value

@@ -23,8 +23,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-import fp_pckg::*;
-import dnn_pckg::*;
 import axi_stream_pckg::*;
 
 module axis_slave_if(
@@ -35,30 +33,21 @@ module axis_slave_if(
 
     //AXI stream slave interface
     input  logic [S_TDATA_WDT-1:0] S_AXIS_TDATA,
-
     input  logic S_AXIS_TLAST,
     input  logic S_AXIS_TVALID,	
     output logic S_AXIS_TREADY,
     
-    //weight & bias memory interface
-    output  logic [WEIGHT_MEM_ADDR_WDT-1:0] w_weight_ext_mem_addr,
-    output  logic [VLW_WDT-1:0]             w_weight_ext_mem_data,
-    output  logic [BIAS_MEM_ADDR_WDT-1:0]   b_bias_ext_mem_addr,
-    output  logic [FP_WORD_WDT-1:0]         b_bias_ext_mem_data,
-
     //activations memory interface
-    output  logic [ACTIV_MEM_ADDR_WDT-1:0]  inputs_ext_mem_addr,
-    output  logic [VLW_WDT-1:0]             inputs_ext_mem_data,
+    output  logic [C_FFT_SIZE_LOG2-1:0]  s_axis_if_addr,
+    output  logic [C_SAMPLE_WDT-1:0]     data_re_0_in,
+    output  logic [C_SAMPLE_WDT-1:0]     data_im_0_in,
 
     //control
-    output  logic s_if_buffer_ready,
+    output  logic push,
     input   logic comp_busy,
-    input   logic outputs_tx_busy,
-    output  logic weights_n_bias,
-    output  logic weights_rx_busy,
-    output  logic weights_rx_done,
-    output  logic inputs_rx_done,
-    output  logic inputs_rx_busy
+    input   logic m_axis_if_busy,
+    output  logic rx_done,
+    output  logic s_axis_if_busy
 
     );
 
@@ -77,8 +66,6 @@ module axis_slave_if(
     logic [S_TDATA_WDT-1:0] fifo_mem[S_FIFO_SIZE];
     logic [S_TDATA_WDT-1:0] fifo_out;
     logic [S_TDATA_WDT-1:0] fifo_in;
-
-    logic [S_TID_WDT-1:0] s_tid;
 
     logic s_fifo_rd_done;
     logic fifo_rd_en_i;
@@ -127,7 +114,7 @@ module axis_slave_if(
             s_wr_next_state = S_WR_IDLE;
 
             casez(s_wr_curr_state)
-                S_WR_IDLE : s_wr_next_state = s_axis_tvalid_i & !comp_busy & !outputs_tx_busy ? S_WR_FIFO : S_WR_IDLE; 
+                S_WR_IDLE : s_wr_next_state = s_axis_tvalid_i & !comp_busy & !m_axis_if_busy ? S_WR_FIFO : S_WR_IDLE; 
                 S_WR_FIFO : s_wr_next_state = s_axis_tlast_i & s_axis_tvalid_i ? S_WR_WAIT : S_WR_FIFO; //start writing
                 S_WR_WAIT : s_wr_next_state = s_fifo_rd_done ? S_WR_IDLE : S_WR_WAIT; //wait for read fsm to finish
                 default : s_wr_next_state = S_WR_IDLE;
@@ -193,7 +180,7 @@ module axis_slave_if(
             casez(s_rd_curr_state)
                 S_RD_IDLE : s_rd_next_state = s_wr_curr_state != S_WR_IDLE ? S_RD_FIFO : S_RD_IDLE; //start reading
                 S_RD_FIFO : s_rd_next_state = s_fifo_rd_done ? S_RD_DONE : S_RD_FIFO; 
-                S_RD_DONE : s_rd_next_state = s_if_buffer_ready & !fifo_rd_en_i ? S_RD_IDLE : S_RD_DONE; //wait till the if buffer fills out
+                S_RD_DONE : s_rd_next_state = push & !fifo_rd_en_i ? S_RD_IDLE : S_RD_DONE; //wait till the if buffer fills out
                 default : s_rd_next_state = S_RD_IDLE;
             endcase
 
@@ -229,78 +216,13 @@ module axis_slave_if(
     //BUFFER FOR WRITING TO MEMORY---------------------------------
     //-------------------------------------------------------------
 
-    always_ff @(posedge clk) begin : tid_reg
-        if(!rst_n) begin
-            s_tid <= '0;
-        end else begin
-            if(s_wr_curr_state == S_WR_IDLE & s_wr_next_state == S_WR_FIFO) //sample ID at beginning of transaction
-                s_tid <= S_AXIS_TID;
-            else if(s_wr_curr_state == S_WR_IDLE & s_rd_curr_state == S_RD_IDLE) //reset
-                s_tid <= '0;
-        end
-    end
-
     //decode & mux the transaction based on 
     always_comb begin : trans_decode
-        casez(s_tid)
-                WEIGHT_S_AXIS_ID:  begin           //streaming weights
-                    s_if_buffer_max         = PU_WIND_SIZE/(S_TDATA_WDT/FP_WORD_WDT);
-                    w_weight_ext_mem_addr   = addr_mem[WEIGHT_MEM_ADDR_WDT-1:0];
-                    w_weight_ext_mem_data   = s_if_buffer_pack;
-                    b_bias_ext_mem_addr     = '0;
-                    b_bias_ext_mem_data     = '0;
-                    inputs_ext_mem_addr     = '0;
-                    inputs_ext_mem_data     = '0;
-                    weights_n_bias          = 1'b1;
-                    weights_rx_busy         = s_wr_curr_state != S_WR_IDLE | s_rd_curr_state != S_RD_IDLE;
-                    weights_rx_done         = s_rd_curr_state == S_RD_IDLE & s_rd_curr_state_i == S_RD_DONE;
-                    inputs_rx_done          = 1'b0;
-                    inputs_rx_busy          = 1'b0;
-
-                end
-                BIAS_S_AXIS_ID: begin             //streaming bias
-                    s_if_buffer_max         =  1;
-                    w_weight_ext_mem_addr   = '0;
-                    w_weight_ext_mem_data   = '0;
-                    b_bias_ext_mem_addr     = addr_mem[BIAS_MEM_ADDR_WDT-1:0];
-                    b_bias_ext_mem_data     = s_if_buffer_pack[VLW_WDT-S_TDATA_WDT +: FP_WORD_WDT];
-                    inputs_ext_mem_addr     = '0;
-                    inputs_ext_mem_data     = '0; 
-                    weights_n_bias          = 1'b0;
-                    weights_rx_busy         = s_wr_curr_state != S_WR_IDLE | s_rd_curr_state != S_RD_IDLE;
-                    weights_rx_done         = s_rd_curr_state == S_RD_IDLE & s_rd_curr_state_i == S_RD_DONE;
-                    inputs_rx_done          = 1'b0;
-                    inputs_rx_busy          = 1'b0;
-                end
-                INPUT_S_AXIS_ID:  begin           //streaming inputs
-                    s_if_buffer_max         = PU_WIND_SIZE/(S_TDATA_WDT/FP_WORD_WDT);
-                    w_weight_ext_mem_addr   = '0;
-                    w_weight_ext_mem_data   = '0;
-                    b_bias_ext_mem_addr     = '0;
-                    b_bias_ext_mem_data     = '0;
-                    inputs_ext_mem_addr     = addr_mem[ACTIV_MEM_ADDR_WDT-1:0];
-                    inputs_ext_mem_data     = s_if_buffer_pack; 
-                    weights_n_bias          = 1'b0;
-                    weights_rx_busy         = 1'b0;
-                    weights_rx_done         = 1'b0;
-                    inputs_rx_done          = s_rd_curr_state == S_RD_IDLE & s_rd_curr_state_i == S_RD_DONE;
-                    inputs_rx_busy          = s_wr_curr_state != S_WR_IDLE | s_rd_curr_state != S_RD_IDLE;
-                end
-                default : begin
-                    s_if_buffer_max           = '0;
-                    w_weight_ext_mem_addr   = '0;
-                    w_weight_ext_mem_data   = '0;
-                    b_bias_ext_mem_addr     = '0;
-                    b_bias_ext_mem_data     = '0;
-                    inputs_ext_mem_addr     = '0;
-                    inputs_ext_mem_data     = '0; 
-                    weights_n_bias          = 1'b0;
-                    weights_rx_busy         = 1'b0;
-                    weights_rx_done         = 1'b0;
-                    inputs_rx_done          = 1'b0;
-                    inputs_rx_busy          = 1'b0;
-                end
-            endcase
+        s_axis_if_addr          = addr_mem;
+        data_re_0_in            = s_if_buffer_unpack[1];
+        data_im_0_in            = s_if_buffer_unpack[0];
+        rx_done                 = s_rd_curr_state == S_RD_IDLE & s_rd_curr_state_i == S_RD_DONE;
+        s_axis_if_busy          = s_wr_curr_state != S_WR_IDLE | s_rd_curr_state != S_RD_IDLE;
     end
 
     always_ff @(posedge clk) begin : s_if_buffer_ctrl
@@ -313,7 +235,7 @@ module axis_slave_if(
                 fifo_rd_en_i  <= fifo_rd_en;
                 fifo_rd_en_ii <= fifo_rd_en_i;
                 if(fifo_rd_en_i)
-                    if(s_if_buffer_cnt == s_if_buffer_max)
+                    if(s_if_buffer_cnt == S_IF_BUFFER_SIZE)
                         s_if_buffer_cnt <= 1;
                     else
                         s_if_buffer_cnt <= s_if_buffer_cnt + 1;    
@@ -325,13 +247,13 @@ module axis_slave_if(
         end
     end
     
-    assign s_if_buffer_ready = s_if_buffer_cnt == s_if_buffer_max & fifo_rd_en_ii ? 1'b1 : 1'b0;
+    assign push = s_if_buffer_cnt == s_if_buffer_max & fifo_rd_en_ii ? 1'b1 : 1'b0;
 
     always_ff @(posedge clk) begin : addr_gen
         if(!rst_n) begin
             addr_mem <= '0;
         end else begin
-            if(s_if_buffer_ready & s_rd_curr_state != S_RD_IDLE)
+            if(push & s_rd_curr_state != S_RD_IDLE)
                 addr_mem <= addr_mem + 1;
             else if(s_rd_curr_state == S_RD_IDLE)
                 addr_mem <= '0;
@@ -353,11 +275,6 @@ module axis_slave_if(
         end
     end
 
-    always_comb begin : buffer_pack
-        for(int i = 0; i < S_IF_BUFFER_SIZE; i++)
-            s_if_buffer_pack[VLW_WDT-1 - i*S_TDATA_WDT -: S_TDATA_WDT] <= s_if_buffer_unpack[i]; 
-    end
-
     // synthesis translate_off
     //simple immediate assertions
     always @(posedge clk) assert (!(fifo_wr_ptr === fifo_rd_ptr & s_wr_curr_state === S_WR_FIFO & s_rd_curr_state === S_RD_FIFO) | (fifo_wr_ptr == fifo_rd_ptr & fifo_wr_ptr == '0) | !rst_n) else $error("Write pointer cannot be equal to read pointer (slave if)");
@@ -373,20 +290,8 @@ module axis_slave_if(
     assert property (@(posedge clk) disable iff (!rst_n) (s_wr_curr_state == S_WR_WAIT |-> s_rd_curr_state == S_RD_FIFO));
 
     assert property (@(posedge clk) disable iff (!rst_n) (S_AXIS_TREADY & S_AXIS_TVALID |-> fifo_wr_en^skid_buffer_en));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_rd_curr_state !== S_RD_IDLE |-> s_tid === WEIGHT_S_AXIS_ID | s_tid === BIAS_S_AXIS_ID | s_tid === INPUT_S_AXIS_ID));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === WEIGHT_S_AXIS_ID |-> addr_mem <= WEIGHT_MEM_SIZE));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === BIAS_S_AXIS_ID |-> addr_mem <= BIAS_MEM_SIZE));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === INPUT_S_AXIS_ID |-> addr_mem <= INPUT_MEM_SIZE));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === WEIGHT_S_AXIS_ID & s_fifo_rd_done |-> ##[1:3] addr_mem === WEIGHT_MEM_SIZE-1));
-
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === BIAS_S_AXIS_ID & s_fifo_rd_done |-> ##[1:3] addr_mem === BIAS_MEM_SIZE-1));
     
-    assert property (@(posedge clk) disable iff (!rst_n) (s_tid === INPUT_S_AXIS_ID & s_fifo_rd_done |-> ##[1:3] addr_mem === INPUT_MEM_SIZE-1));
+    assert property (@(posedge clk) disable iff (!rst_n) (s_fifo_rd_done |-> ##[1:3] addr_mem === OUTPUT_MEM_SIZE-1));
     
     // synthesis translate_on
 

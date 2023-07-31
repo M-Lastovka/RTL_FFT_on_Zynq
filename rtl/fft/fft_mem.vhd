@@ -27,14 +27,6 @@ USE IEEE.MATH_REAL.ALL;
 LIBRARY xil_defaultlib;
 USE xil_defaultlib.fft_pckg.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;-
 
 ENTITY fft_mem IS
         PORT ( 
@@ -68,14 +60,16 @@ ENTITY fft_mem IS
            
            -------------------------------address-----------------------------------
            
-           addr_0_in           :   IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
-           addr_1_in           :   IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+           addr_0_in           : IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+           addr_1_in           : IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
            addr_even_c         : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
            addr_odd_c          : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);                       
            
            ------------------------------control-----------------------------------
            
            alg_ctrl                 : IN alg_command;                                                             --controls ROM MUXes and ROM wr_en and en signals, also shifts twiddle address masking register
+           pop                      : IN std_logic;
+           push                     : IN std_logic;
            twiddle_en               : OUT std_logic;
            rx_single_ndouble_mode   : IN  std_logic;   -- = '1' - input samples are transmited one at a time through port 0
                                                        -- = '0' - input samples are transmited two at a time 
@@ -175,7 +169,6 @@ BEGIN
         
         dff : PROCESS(sys_clk_in, rst_n_in)
         BEGIN
-        
             IF (rst_n_in = '0') THEN
                 addr_even_del(index+1) <= (OTHERS => '0');
                 addr_odd_del(index+1)  <= (OTHERS => '0');
@@ -183,7 +176,6 @@ BEGIN
                 addr_even_del(index+1) <= addr_even_del(index);
                 addr_odd_del(index+1) <= addr_odd_del(index);
             END IF;
-        
         END PROCESS dff;
         
     END GENERATE pipeline_delay;
@@ -335,15 +327,15 @@ BEGIN
             wr_en_B     =>      wr_en_odd_1_c  
         );
         
-    access_dec : PROCESS(alg_ctrl,rx_single_ndouble_mode,tx_single_ndouble_mode)       --decodes fsm input to RAM enables and write enables
+    access_dec : PROCESS(alg_ctrl,rx_single_ndouble_mode,tx_single_ndouble_mode, push, pop)       --decodes fsm input to RAM enables and write enables
     BEGIN
     
         CASE(alg_ctrl) IS
             WHEN RX                     =>
                 IF (rx_single_ndouble_mode = '1') THEN
-                    en_even_0_c     <= '1';
+                    en_even_0_c     <= push;
                     en_odd_0_c      <= '0';
-                    wr_en_even_0_c  <= '1';
+                    wr_en_even_0_c  <= push;
                     wr_en_odd_0_c   <= '0';
                     en_even_1_c     <= '0';
                     en_odd_1_c      <= '0';
@@ -351,10 +343,10 @@ BEGIN
                     wr_en_odd_1_c   <= '0';
                     twiddle_en      <= '0';
                 ELSE
-                    en_even_0_c     <= '1';
-                    en_odd_0_c      <= '1';
-                    wr_en_even_0_c  <= '1';
-                    wr_en_odd_0_c   <= '1';
+                    en_even_0_c     <= push;
+                    en_odd_0_c      <= push;
+                    wr_en_even_0_c  <= push;
+                    wr_en_odd_0_c   <= push;
                     en_even_1_c     <= '0';
                     en_odd_1_c      <= '0';
                     wr_en_even_1_c  <= '0';
@@ -384,7 +376,7 @@ BEGIN
             WHEN TX                     =>
                 IF ((C_FFT_SIZE_LOG2 mod 2) = 0) THEN
                    IF (tx_single_ndouble_mode = '1') THEN  
-                       en_even_0_c     <= '1';             
+                       en_even_0_c     <= pop;             
                        en_odd_0_c      <= '0';             
                        wr_en_even_0_c  <= '0';             
                        wr_en_odd_0_c   <= '0';             
@@ -394,8 +386,8 @@ BEGIN
                        wr_en_odd_1_c   <= '0';             
                        twiddle_en      <= '0';             
                    ELSE                                    
-                       en_even_0_c     <= '1';             
-                       en_odd_0_c      <= '1';             
+                       en_even_0_c     <= pop;             
+                       en_odd_0_c      <= pop;             
                        wr_en_even_0_c  <= '0';             
                        wr_en_odd_0_c   <= '0';             
                        en_even_1_c     <= '0';             
@@ -410,7 +402,7 @@ BEGIN
                         en_odd_0_c      <= '0';             
                         wr_en_even_0_c  <= '0';             
                         wr_en_odd_0_c   <= '0';             
-                        en_even_1_c     <= '1';             
+                        en_even_1_c     <= pop;             
                         en_odd_1_c      <= '0';             
                         wr_en_even_1_c  <= '0';             
                         wr_en_odd_1_c   <= '0';             
@@ -420,8 +412,8 @@ BEGIN
                         en_odd_0_c      <= '0';             
                         wr_en_even_0_c  <= '0';             
                         wr_en_odd_0_c   <= '0';             
-                        en_even_1_c     <= '1';             
-                        en_odd_1_c      <= '1';             
+                        en_even_1_c     <= pop;             
+                        en_odd_1_c      <= pop;             
                         wr_en_even_1_c  <= '0';             
                         wr_en_odd_1_c   <= '0';             
                         twiddle_en      <= '0';             
@@ -558,7 +550,8 @@ BEGIN
                 out_odd_im   <= (OTHERS => '0');  
         END CASE;
     END PROCESS data_out_mux;
-    
+
+    --synthesis translate_off
    
     --debug signals assignement
     re_in_even_0_d    <=       in_even_0(C_DFT_WDT-1 DOWNTO C_SAMPLE_WDT);
@@ -579,24 +572,24 @@ BEGIN
     im_out_even_1_d   <=       out_even_1(C_SAMPLE_WDT-1 DOWNTO 0);
     im_out_odd_1_d    <=       out_odd_1(C_SAMPLE_WDT-1 DOWNTO 0); 
 
-    --synthesis translate_off
-    io_debug_proc : PROCESS(sys_clk_in) --generate logs when data is inputted or outputted from the FFT block
-    BEGIN
-        IF(rising_edge(sys_clk_in) AND rx_single_ndouble_mode = '1' AND 
-        (C_VERB = VERB_MED OR C_VERB = VERB_HIGH)) THEN --only single transfers
-            IF(alg_ctrl = RX) THEN
-              REPORT "Real: " & integer'image(to_integer(signed(data_re_0_in))) & 
-              " Imag: " & integer'image(to_integer(signed(data_im_0_in))) & 
-              "@ addr: [" & integer'image(to_integer(unsigned(addr_0_in))) & 
-              "] written to the FFT memory";
-            ELSIF(alg_ctrl = TX) THEN
-              REPORT "Real: " & integer'image(to_integer(signed(data_re_0_out))) & 
-              " Imag: " & integer'image(to_integer(signed(data_im_0_out))) & 
-              "@ addr: [" & integer'image(to_integer(unsigned(addr_0_in))) & 
-              "] read from the FFT memory";
-            END IF;
-        END IF;
-    END PROCESS io_debug_proc;
+    --io_debug_proc : PROCESS(sys_clk_in) --generate logs when data is inputted or outputted from the FFT block
+    --BEGIN
+    --    IF(rising_edge(sys_clk_in) AND rx_single_ndouble_mode = '1' AND 
+    --    (C_VERB = VERB_MED OR C_VERB = VERB_HIGH)) THEN --only single transfers
+    --        IF(alg_ctrl = RX) THEN
+    --          REPORT "Real: " & integer'image(to_integer(signed(data_re_0_in))) & 
+    --          " Imag: " & integer'image(to_integer(signed(data_im_0_in))) & 
+    --          "@ addr: [" & integer'image(to_integer(unsigned(addr_0_in))) & 
+    --          "] written to the FFT memory";
+    --        ELSIF(alg_ctrl = TX) THEN
+    --          REPORT "Real: " & integer'image(to_integer(signed(data_re_0_out))) & 
+    --          " Imag: " & integer'image(to_integer(signed(data_im_0_out))) & 
+    --          "@ addr: [" & integer'image(to_integer(unsigned(addr_0_in))) & 
+    --          "] read from the FFT memory";
+    --        END IF;
+    --    END IF;
+    --END PROCESS io_debug_proc;
+    
     --synthesis translate_on
     
 

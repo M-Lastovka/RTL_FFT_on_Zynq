@@ -58,13 +58,13 @@ ENTITY fft_dig_top IS
            rx_ready          : OUT std_logic;   --a sample is ready to be pushed into memory
            rx_val            : OUT std_logic;   --a sample has been pushed into memory 
            rx_ack            : IN  std_logic;   --end rx transaction of this sample and move onto another           :
-           push              : IN  std_logic;   --memory write signal for incoming sample, not used in burst mode
+           push              : IN  std_logic;   --memory write signal for incoming sample 
            rx_done           : IN  std_logic;   --the memory is filled with external data, computation can begin
            comp_done         : OUT std_logic;   --algorithm has finished
            tx_ready          : OUT std_logic;   --ready to transmit dft sample
            tx_val            : OUT std_logic;   --the sample at the output is valid
            tx_ack            : IN  std_logic;   --end tx transaction of this sample and move onto another
-           pop               : IN  std_logic;   --memory read acknowledge signal, not used in burst mode
+           pop               : IN  std_logic;   --memory read acknowledge signal 
            tx_done           : IN  std_logic;   --all dft samples have been transmited
            all_done          : OUT std_logic;    --everything is done
            
@@ -128,13 +128,13 @@ ARCHITECTURE structural OF fft_dig_top IS
            rx_ready          : OUT std_logic;   --a sample is ready to be pushed into memory
            rx_val            : OUT std_logic;   --a sample has been pushed into memory
            rx_ack            : IN  std_logic;   --end rx transaction of this sample and move onto another
-           push              : IN  std_logic;   --memory write signal for incoming sample, not used in burst mode
+           push              : IN  std_logic;   --memory write signal for incoming sample
            rx_done           : IN  std_logic;   --the memory is filled with external data, computation can begin
            comp_done         : OUT std_logic;   --algorithm has finished
            tx_ready          : OUT std_logic;   --ready to transmit computed sample
            tx_val            : OUT std_logic;   --the sample at the output is valid
            tx_ack            : IN  std_logic;   --end tx transaction of this sample and move onto another
-           pop               : IN  std_logic;   --memory read acknowledge signal, not used in burst mode
+           pop               : IN  std_logic;   --memory read acknowledge signal
            tx_done           : IN  std_logic;   --all dft samples have been transmited
            all_done          : OUT std_logic    --everything is done
                    
@@ -214,50 +214,52 @@ ARCHITECTURE structural OF fft_dig_top IS
     
     COMPONENT fft_mem
         PORT ( 
-           -----------------------clocks and resets--------------------------------
-           
-           sys_clk_in         : IN  std_logic;
-           rst_n_in           : IN  std_logic;
-            
-           -------------------------internal data-------------------------------------
-           
-           in_even_re          : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           in_even_im          : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           in_odd_re           : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           in_odd_im           : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           
-           out_even_re         : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           out_even_im         : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           out_odd_re          : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           out_odd_im          : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
-           
-           -------------------------external data-------------------------------------
-           
-           data_re_0_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_im_0_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_re_1_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_im_1_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_re_0_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_im_0_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_re_1_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
-           data_im_1_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0); 
-           
-           -------------------------------address-----------------------------------
-           
-           addr_0_in           :   IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
-           addr_1_in           :   IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
-           addr_even_c         : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
-           addr_odd_c          : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);                       
-           
-           ------------------------------control-----------------------------------
-           
-           alg_ctrl                 : IN alg_command;                                                             --controls ROM MUXes and ROM wr_en and en signals, also shifts twiddle address masking register
-           twiddle_en               : OUT std_logic;
-           rx_single_ndouble_mode   : IN  std_logic;   -- = '1' - input samples are transmited one at a time through port 0
-                                                       -- = '0' - input samples are transmited two at a time 
-           tx_single_ndouble_mode   : IN  std_logic    -- = '1' - output samples are transmited one at a time through port 0
-           
-           );
+            -----------------------clocks and resets--------------------------------
+
+            sys_clk_in         : IN  std_logic;
+            rst_n_in           : IN  std_logic;
+
+            -------------------------internal data-------------------------------------
+
+            in_even_re          : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            in_even_im          : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            in_odd_re           : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            in_odd_im           : IN std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+
+            out_even_re         : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            out_even_im         : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            out_odd_re          : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+            out_odd_im          : OUT std_logic_vector(C_SAMPLE_WDT-1 DOWNTO 0);
+
+            -------------------------external data-------------------------------------
+
+            data_re_0_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_0_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_re_1_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_1_in         :   IN   std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_re_0_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_0_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_re_1_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
+            data_im_1_out        :   OUT  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0); 
+
+            -------------------------------address-----------------------------------
+
+            addr_0_in           : IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+            addr_1_in           : IN   std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+            addr_even_c         : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
+            addr_odd_c          : IN  std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);                       
+
+            ------------------------------control-----------------------------------
+
+            alg_ctrl                 : IN alg_command;                                                             --controls ROM MUXes and ROM wr_en and en signals, also shifts twiddle address masking register
+            pop                      : IN std_logic;
+            push                     : IN std_logic;
+            twiddle_en               : OUT std_logic;
+            rx_single_ndouble_mode   : IN  std_logic;   -- = '1' - input samples are transmited one at a time through port 0
+                                                        -- = '0' - input samples are transmited two at a time 
+            tx_single_ndouble_mode   : IN  std_logic    -- = '1' - output samples are transmited one at a time through port 0
+
+            );
     END COMPONENT fft_mem;
     
             
@@ -351,6 +353,8 @@ BEGIN
            addr_even_c             =>      addr_even_c,
            addr_odd_c              =>      addr_odd_c,                       
            alg_ctrl                =>      alg_ctrl,
+           pop                     =>      pop,
+           push                    =>      push,
            twiddle_en              =>      twiddle_en,
            rx_single_ndouble_mode  =>      rx_single_ndouble_mode,
            tx_single_ndouble_mode  =>      tx_single_ndouble_mode
