@@ -1,6 +1,6 @@
 %% script to generate a twiddle factor ROM for FPGA implementation
 
-size_of_fft = 2^3;
+size_of_fft = 2^12;
 dft_wdt = 48;
 scale_const_log2 = dft_wdt/2-1; %determines how many bits to the left do we shift the twiddle factors
 block_wdt = 4;         %number of twiddle factors per line
@@ -36,7 +36,7 @@ end
     temp = strcat(temp, 'USE IEEE.STD_LOGIC_1164.ALL;\n');
     temp = strcat(temp, 'use IEEE.NUMERIC_STD.ALL;\n');
     temp = strcat(temp, 'LIBRARY xil_defaultlib;\n');
-    temp = strcat(temp, 'USE xil_defaultlib.dig_top_pckg.ALL;\n\n\n');
+    temp = strcat(temp, 'USE xil_defaultlib.fft_pckg.ALL;\n\n\n');
     
     temp = strcat(temp, 'ENTITY fft_twiddle_LUT IS\n');
     temp = strcat(temp, '    PORT (\n');

@@ -22,8 +22,6 @@
 
 `include "tb_macro_def.svh"
 
-import fp_pckg::*;
-import dnn_pckg::*;
 import sim_pckg::*;
 import axi_stream_pckg::*;
 
@@ -33,13 +31,11 @@ import block_vip_fft_axi4stream_vip_1_0_pkg::*;
 
 class tb_monitor;
 
-bit bckdoor_n_frntdoor;
 block_vip_fft_axi4stream_vip_1_0_slv_t  s_axis_ext_agent;
 
-function new(bit bckdoor_n_frntdoor, block_vip_fft_axi4stream_vip_1_0_slv_t  s_axis_ext_agent);
-    this.bckdoor_n_frntdoor = bckdoor_n_frntdoor;
+function new(block_vip_fft_axi4stream_vip_1_0_slv_t  s_axis_ext_agent);
     this.s_axis_ext_agent = s_axis_ext_agent;
-    $display("Monitor object instantiated. %s access is set\n", bckdoor_n_frntdoor ? "backdoor" : "frontdoor");
+    $display("Monitor object instantiated\n");
 endfunction
 
 task s_gen_tready();
@@ -60,7 +56,8 @@ endtask
 task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]);
     axi4stream_monitor_transaction  s_axis_monitor_trans;
     logic[7:0] data_packet_unpack[M_TDATA_WDT/8];
-    logic[M_TDATA_WDT-1:0] data_packet_pack;
+    logic[M_TDATA_WDT-1:0] data_packet_pack_re;
+    logic[M_TDATA_WDT-1:0] data_packet_pack_im;
     int packet_cnt = 0;
     int mem_line = 0;
     
@@ -70,40 +67,22 @@ task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]
 
       this.s_axis_ext_agent.monitor.item_collected_port.get(s_axis_monitor_trans);
       s_axis_monitor_trans.get_data(data_packet_unpack);
-      data_packet_pack = unpacked_to_packed(data_packet_unpack);
-      output_mem_dut[packet_cnt/(PU_WIND_SIZE/(M_TDATA_WDT/FP_WORD_WDT))][(packet_cnt % (PU_WIND_SIZE/(M_TDATA_WDT/FP_WORD_WDT)))*M_TDATA_WDT +: M_TDATA_WDT] = data_packet_pack;
+      data_packet_pack_re = unpacked_to_packed(data_packet_unpack);
+
+      this.s_axis_ext_agent.monitor.item_collected_port.get(s_axis_monitor_trans);
+      s_axis_monitor_trans.get_data(data_packet_unpack);
+      data_packet_pack_im = unpacked_to_packed(data_packet_unpack);
+
+      set_mat(output_mem, packet_cnt, data_packet_pack_re, data_packet_pack_im);
+
       packet_cnt++;
-      `verb_filt(VER_HIGH)
-      $display("AXI stream data packet received! Data: %h", data_packet_pack);
-      `filt_end
         
     end while (!s_axis_monitor_trans.get_last()); 
 
     $display("Receiving of AXI stream data from the DUT is finished");
 
-    if(packet_cnt != FFT_MEM_SIZE*(VLW_WDT/M_TDATA_WDT))
-        $fatal("Number of received AXI data stream packets: %d does not match targer: %d!",packet_cnt, FFT_MEM_SIZE*(VLW_WDT/M_TDATA_WDT));
-    
-endtask
-
-task bck_door_get_data(ref logic [VLW_WDT-1:0] activ_mem_bckdoor[ACTIV_MEM_SIZE-1:0], 
-                       ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]);
-    
-    $display("Reading the computed output through backdoor");
-
-    @(`dut_path.comp_done);
-    
-    #10ns;  
-
-    activ_mem_bckdoor = `activ_mem_path.activ_mem;
-
-    #10ns;
-
-    for(int j = 0; j < BATCH_SIZE; j++) begin
-      for(int i = 0; i < DNN_STRUCT[0][1]; i++) begin
-        set_output_mat(i,j,fp_2_real(get_act_mat(i,j,LAYERS_CNT,activ_mem_bckdoor)),output_mem_dut);
-      end
-    end
+    if(packet_cnt != FFT_MEM_SIZE)
+        $fatal("Number of received AXI data stream packets: %d does not match targer: %d!",packet_cnt, FFT_MEM_SIZE);
     
 endtask
 
