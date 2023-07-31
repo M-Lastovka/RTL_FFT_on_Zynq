@@ -73,7 +73,7 @@ module axis_master_if(
     logic m_rd_done;
 
     logic [$clog2(M_IF_BUFFER_SIZE):0] m_if_buffer_cnt;
-    logic [$clog2(OUTPUT_MEM_SIZE):0]  m_if_buffer_wr_cnt;
+    logic [$clog2(FFT_MEM_SIZE):0]  m_if_buffer_wr_cnt;
     logic m_if_buffer_wr;
     logic m_if_buffer_shift;
     logic m_if_buffer_valid;
@@ -128,7 +128,7 @@ module axis_master_if(
                 if(m_if_buffer_wr) begin
                     m_if_buffer_valid  <= 1'b1; //wait with valid until first write to buffer
                     m_if_buffer_wr_cnt <= m_if_buffer_wr_cnt + 1;
-                    if(m_if_buffer_wr_cnt == OUTPUT_MEM_SIZE-1)
+                    if(m_if_buffer_wr_cnt == FFT_MEM_SIZE-1)
                         m_if_buffer_wr_done <= 1'b1; //no more writes to the IF buffer needed
                 end
 
@@ -318,7 +318,7 @@ module axis_master_if(
 
     assert property (@(posedge clk) disable iff (!rst_n) (M_AXIS_TREADY & !M_AXIS_TVALID & m_rd_curr_state != M_RD_INIT |-> !fifo_rd_en));
 
-    assert property (@(posedge clk) disable iff (!rst_n) (m_wr_curr_state == M_WR_WAIT |-> m_axis_if_addr == OUTPUT_MEM_SIZE | M_IF_BUFFER_SIZE == 1));
+    assert property (@(posedge clk) disable iff (!rst_n) (m_wr_curr_state == M_WR_WAIT |-> m_axis_if_addr == FFT_MEM_SIZE | M_IF_BUFFER_SIZE == 1));
 
     assert property (@(posedge clk) disable iff (!rst_n) (pop |=> !pop | M_IF_BUFFER_SIZE == 1));
 

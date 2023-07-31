@@ -25,7 +25,7 @@ package axi_stream_pckg;
 //FFT TODO: make this more robust
 parameter VLW_WDT         = 64; 
 parameter C_FFT_SIZE_LOG2 = 12;
-parameter OUTPUT_MEM_SIZE = 2**C_FFT_SIZE_LOG2;
+parameter FFT_MEM_SIZE = 2**C_FFT_SIZE_LOG2;
 parameter OUTPUT_MEM_OFFSET = 0;
 parameter C_SAMPLE_WDT    = 24;
 
