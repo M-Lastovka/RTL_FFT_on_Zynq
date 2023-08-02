@@ -73,7 +73,6 @@ module axis_slave_if(
     logic skid_buffer_en;
 
     logic [$clog2(S_IF_BUFFER_SIZE):0] s_if_buffer_cnt;
-    logic [$clog2(S_IF_BUFFER_SIZE):0] s_if_buffer_max;
     logic [S_TDATA_WDT-1:0] s_if_buffer_unpack[S_IF_BUFFER_SIZE-1:0];
     logic [VLW_WDT-1:0] s_if_buffer_pack;
     logic s_axis_tvalid_i;
@@ -247,7 +246,7 @@ module axis_slave_if(
         end
     end
     
-    assign push = s_if_buffer_cnt == s_if_buffer_max & fifo_rd_en_ii ? 1'b1 : 1'b0;
+    assign push = s_if_buffer_cnt == S_IF_BUFFER_SIZE & fifo_rd_en_ii ? 1'b1 : 1'b0;
 
     always_ff @(posedge clk) begin : addr_gen
         if(!rst_n) begin

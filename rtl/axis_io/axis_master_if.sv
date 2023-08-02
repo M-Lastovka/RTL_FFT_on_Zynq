@@ -109,10 +109,10 @@ module axis_master_if(
     //pop reads from the activations memory and increments the address
     assign pop = m_wr_curr_state == M_WR_INIT | (m_if_buffer_cnt == 1 & !m_if_buffer_wr_done & !fifo_full); 
     //we write to buffer at counter == max and fifo is being written or at init
-    assign m_if_buffer_wr    =  fifo_wr_en & m_if_buffer_cnt == m_axis_if_addr | m_wr_curr_state_i == M_WR_INIT; 
+    assign m_if_buffer_wr    =  fifo_wr_en & m_if_buffer_cnt == M_IF_BUFFER_SIZE | m_wr_curr_state_i == M_WR_INIT; 
     //we shift the buffer on fifo_wr_en
     assign m_if_buffer_shift =  fifo_wr_en & !m_if_buffer_wr;
-    assign m_if_buffer_done_c = m_if_buffer_cnt == m_axis_if_addr & m_if_buffer_wr_done & m_if_buffer_wr; //no more writes and reads to and from the IF buffer needed
+    assign m_if_buffer_done_c = m_if_buffer_cnt == M_IF_BUFFER_SIZE & m_if_buffer_wr_done & m_if_buffer_wr; //no more writes and reads to and from the IF buffer needed
     assign m_if_buffer_done = m_if_buffer_done_c | m_if_buffer_done_i; //final flag is OR result of latched flip flop value and combinational value => needed if there is fifo stall on last write
 
     always_ff @(posedge clk) begin : m_if_buffer_ctrl
@@ -134,7 +134,7 @@ module axis_master_if(
 
                 if(m_if_buffer_shift | m_if_buffer_wr) begin //increment counter
                     m_if_buffer_cnt <= m_if_buffer_cnt + 1;
-                    if(m_if_buffer_cnt == m_axis_if_addr) //reset counter on max value
+                    if(m_if_buffer_cnt == M_IF_BUFFER_SIZE) //reset counter on max value
                         m_if_buffer_cnt <= 1;
                 end
 
@@ -174,7 +174,7 @@ module axis_master_if(
         end else begin
             if(m_if_buffer_wr) begin
                 for(int i = 0; i < M_IF_BUFFER_SIZE; i++)
-                    m_if_buffer_unpack[i] <= outputs_ext_mem_data[VLW_WDT-1 - i*M_TDATA_WDT -: M_TDATA_WDT];
+                    m_if_buffer_unpack[M_IF_BUFFER_SIZE-1-i] <= outputs_ext_mem_data[VLW_WDT-1 - i*M_TDATA_WDT -: M_TDATA_WDT];
             end else if(m_if_buffer_shift) begin
                 for(int i = 0; i < M_IF_BUFFER_SIZE; i++)
                     if(i == 0)

@@ -67,11 +67,11 @@ task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]
 
       this.s_axis_ext_agent.monitor.item_collected_port.get(s_axis_monitor_trans);
       s_axis_monitor_trans.get_data(data_packet_unpack);
-      data_packet_pack_re = unpacked_to_packed(data_packet_unpack);
+      data_packet_pack_re = $itor(unpacked_to_packed(data_packet_unpack));
 
       this.s_axis_ext_agent.monitor.item_collected_port.get(s_axis_monitor_trans);
       s_axis_monitor_trans.get_data(data_packet_unpack);
-      data_packet_pack_im = unpacked_to_packed(data_packet_unpack);
+      data_packet_pack_im = $itor(unpacked_to_packed(data_packet_unpack));
 
       set_mem(output_mem_dut, packet_cnt, data_packet_pack_re, data_packet_pack_im);
 
@@ -81,8 +81,7 @@ task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]
 
     $display("Receiving of AXI stream data from the DUT is finished");
 
-    if(packet_cnt != FFT_MEM_SIZE)
-        $fatal("Number of received AXI data stream packets: %d does not match targer: %d!",packet_cnt, FFT_MEM_SIZE);
+    assert(packet_cnt == FFT_MEM_SIZE) else $fatal("Number of received AXI data stream packets: %d does not match target: %d!", packet_cnt, FFT_MEM_SIZE);
     
 endtask
 

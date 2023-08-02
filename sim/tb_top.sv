@@ -75,7 +75,7 @@ end
 
 initial begin
 
-  int line_num = 0;
+  int line_num = 1;
 
   m_axis_ext_agent = new("m_axis_ext_agent", `m_axis_ext_if_path);
   m_axis_ext_agent.start_master();
