@@ -37,15 +37,17 @@ endfunction
 //computes the reference solution from the inputs sent to DUT, compares them to
 //the DUT results, reports MSE
 function automatic void compare_res(logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0], 
-                                    logic [VLW_WDT-1:0] output_mem_ref[FFT_MEM_SIZE-1:0]);
+                                    logic [VLW_WDT-1:0] output_mem_gen[FFT_MEM_SIZE-1:0]);
 
     real sqr_err = 0.0;
     real mn_sqr_err = 0.0;
+    logic re = 1;
+    logic im = 0;
 
     for(int i = 0; i < FFT_MEM_SIZE; i++) begin
-        sqr_err = (get_mem(output_mem_dut, i, "re") - get_mem(output_mem_ref, i, "re"))**2 + (get_mem(output_mem_dut, i, "im") - get_mem(output_mem_ref, i, "im"))**2;
+        sqr_err = (get_mem(output_mem_dut, i, re) - get_mem(output_mem_gen, i, re))**2 + (get_mem(output_mem_dut, i, im) - get_mem(output_mem_gen, i, im))**2;
         $display("@ index %2d DUT: %f + j*%f; REF: %f + j*%f, squared error: %f", i, 
-            get_mem(output_mem_dut, i, "re"), get_mem(output_mem_dut, i, "im"), get_mem(output_mem_ref, i, "re"), get_mem(output_mem_ref, i, "im"), sqr_err);
+            get_mem(output_mem_dut, i, re), get_mem(output_mem_dut, i, im), get_mem(output_mem_gen, i, re), get_mem(output_mem_gen, i, im), sqr_err);
         mn_sqr_err += sqr_err;
     end
     mn_sqr_err = sqr_err/FFT_MEM_SIZE;

@@ -43,7 +43,8 @@ bit halt_tb = 0;
 
 //generated data for the DUT
 logic [VLW_WDT-1:0] input_mem_gen[FFT_MEM_SIZE-1:0];
-logic [VLW_WDT-1:0] output_mem[FFT_MEM_SIZE-1:0];
+logic [VLW_WDT-1:0] output_mem_gen[FFT_MEM_SIZE-1:0];
+logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0];
 
 //generator and monitor objects
 tb_generator    generator;
@@ -74,7 +75,7 @@ end
 
 initial begin
 
-  int period = $urandom_range(0,20);
+  int line_num = 0;
 
   m_axis_ext_agent = new("m_axis_ext_agent", `m_axis_ext_if_path);
   m_axis_ext_agent.start_master();
@@ -82,23 +83,23 @@ initial begin
   s_axis_ext_agent = new("s_axis_ext_agent", `s_axis_ext_if_path);
   s_axis_ext_agent.start_slave();
 
-  monitor = new(bckdoor_n_frntdoor, s_axis_ext_agent);
-  scoreboard = new(0);
-  generator = new(1, 0, 0);
-  driver = new(m_axis_ext_agent);
+  monitor = new(.s_axis_ext_agent(s_axis_ext_agent));
+  scoreboard = new();
+  generator = new(.f_name_inputs("fft_tb_data_input.txt"), .f_name_outputs("fft_tb_data_output.txt"));
+  driver = new(.m_axis_ext_agent(m_axis_ext_agent));
 
     for(int k = 0; k < MAX_TRANS_CNT; k++) begin
 
-      generator.input_matrix_set(input_mem_gen);
+      generator.input_data_set(input_mem_gen, output_mem_gen, line_num);
 
       //write to memories (through AXIS)
-      driver.frnt_door_mems_write(w_weight_mem_gen, b_bias_mem_gen, input_mem_gen, k % period != 0);
+      driver.frnt_door_mems_write(input_mem_gen);
 
       monitor.s_gen_tready();
 
-      monitor.frnt_door_get_data(output_mem);
+      monitor.frnt_door_get_data(output_mem_dut);
 
-      scoreboard.compare_res(input_mem_gen, w_weight_mem_gen, b_bias_mem_gen, activ_mem_bckdoor, output_mem);
+      scoreboard.compare_res(output_mem_dut, output_mem_gen);
 
     end
 

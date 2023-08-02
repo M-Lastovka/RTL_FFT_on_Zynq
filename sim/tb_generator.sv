@@ -27,26 +27,29 @@ import axi_stream_pckg::*;
 
 class tb_generator;
 
-bit data_is_sine;
-bit data_is_const;
+string f_name_inputs;
+string f_name_outputs;
 
-function new( bit data_is_sine, bit data_is_const);
-    this.data_is_sine = data_is_sine;
-    this.data_is_const = data_is_const;
+function new(f_name_inputs, f_name_outputs);
+    this.f_name_inputs = string'(f_name_inputs);
+    this.f_name_outputs = string'(f_name_outputs);
     $display("Generator object instantiated\n");
 endfunction
 
-function automatic void input_data_set(ref logic [VLW_WDT-1:0] inputs_mem_gen[FFT_MEM_SIZE-1:0], 
-                                       ref logic [VLW_WDT-1:0] outputs_mem_gen[FFT_MEM_SIZE-1:0], 
+function automatic void input_data_set(ref logic [VLW_WDT-1:0] input_mem_gen[FFT_MEM_SIZE-1:0], 
+                                       ref logic [VLW_WDT-1:0] output_mem_gen[FFT_MEM_SIZE-1:0], 
                                        int line_num);
     int fd;
     real temp_re;
     real temp_im;
     int scan_r;
     string line;
-    
+
+    this.f_name_inputs = "fft_tb_data_input.txt";
+    this.f_name_outputs = "fft_tb_data_output.txt";
+
     $display("Generating inputs by reading from a file\n");
-    fd = $fopen("benchmark_data_input.txt", "r");
+    fd = $fopen(this.f_name_inputs, "r");
     assert(fd) else $fatal("File for generating inputs could not be read, exiting!");
 
 
@@ -59,14 +62,14 @@ function automatic void input_data_set(ref logic [VLW_WDT-1:0] inputs_mem_gen[FF
         if(!$feof(fd)) begin
             scan_r = $fscanf(fd, "%f ", temp_re);
             scan_r = $fscanf(fd, "%f ", temp_im);
-            set_mem(inputs_mem_gen, i, temp_re, temp_im);
+            set_mem(input_mem_gen, i, temp_re, temp_im);
         end
     end
     
     $fclose(fd);     
     
     $display("Generating outputs by reading from a file\n");
-    fd = $fopen("benchmark_data_output.txt", "r");
+    fd = $fopen(this.f_name_outputs, "r");
     assert(fd) else $fatal("File for generating outputs could not be read, exiting!");
 
     //first read all the lines before that line
@@ -78,7 +81,7 @@ function automatic void input_data_set(ref logic [VLW_WDT-1:0] inputs_mem_gen[FF
         if(!$feof(fd)) begin
             scan_r = $fscanf(fd, "%f ", temp_re);
             scan_r = $fscanf(fd, "%f ", temp_im);
-            set_mem(outputs_mem_gen, i, temp_re, temp_im);
+            set_mem(output_mem_gen, i, temp_re, temp_im);
         end
     end
     

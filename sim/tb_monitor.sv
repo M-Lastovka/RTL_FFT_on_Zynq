@@ -56,8 +56,8 @@ endtask
 task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]);
     axi4stream_monitor_transaction  s_axis_monitor_trans;
     logic[7:0] data_packet_unpack[M_TDATA_WDT/8];
-    logic[M_TDATA_WDT-1:0] data_packet_pack_re;
-    logic[M_TDATA_WDT-1:0] data_packet_pack_im;
+    real data_packet_pack_re;
+    real data_packet_pack_im;
     int packet_cnt = 0;
     int mem_line = 0;
     
@@ -73,7 +73,7 @@ task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]
       s_axis_monitor_trans.get_data(data_packet_unpack);
       data_packet_pack_im = unpacked_to_packed(data_packet_unpack);
 
-      set_mat(output_mem, packet_cnt, data_packet_pack_re, data_packet_pack_im);
+      set_mem(output_mem_dut, packet_cnt, data_packet_pack_re, data_packet_pack_im);
 
       packet_cnt++;
         

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_top_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_sim_pckg_sv " />
+            <top_module name="axi4stream_vip_pkg" />
+            <top_module name="axi_stream_pckg" />
+            <top_module name="block_vip_fft_axi4stream_vip_0_0_pkg" />
+            <top_module name="block_vip_fft_axi4stream_vip_1_0_pkg" />
+            <top_module name="fft_pckg" />
+            <top_module name="glbl" />
+            <top_module name="sim_pckg" />
+            <top_module name="std" />
+            <top_module name="tb_top" />
+            <top_module name="xil_common_vip_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000000 us"></ZoomStartTime>
+      <ZoomEndTime time="232.500001 us"></ZoomEndTime>
+      <Cursor1Time time="0.000000 us"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="108"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="65" />
+   <wvobject fp_name="/tb_top/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/rst_n" type="logic">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/clk_en" type="logic">
+      <obj_property name="ElementShortName">clk_en</obj_property>
+      <obj_property name="ObjectShortName">clk_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/halt_tb" type="logic">
+      <obj_property name="ElementShortName">halt_tb</obj_property>
+      <obj_property name="ObjectShortName">halt_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/S_AXIS_TREADY" type="logic">
+      <obj_property name="ElementShortName">S_AXIS_TREADY</obj_property>
+      <obj_property name="ObjectShortName">S_AXIS_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/S_AXIS_TDATA" type="array">
+      <obj_property name="ElementShortName">S_AXIS_TDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">S_AXIS_TDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/S_AXIS_TLAST" type="logic">
+      <obj_property name="ElementShortName">S_AXIS_TLAST</obj_property>
+      <obj_property name="ObjectShortName">S_AXIS_TLAST</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/S_AXIS_TVALID" type="logic">
+      <obj_property name="ElementShortName">S_AXIS_TVALID</obj_property>
+      <obj_property name="ObjectShortName">S_AXIS_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/M_AXIS_TREADY" type="logic">
+      <obj_property name="ElementShortName">M_AXIS_TREADY</obj_property>
+      <obj_property name="ObjectShortName">M_AXIS_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/M_AXIS_TDATA" type="array">
+      <obj_property name="ElementShortName">M_AXIS_TDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">M_AXIS_TDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/M_AXIS_TLAST" type="logic">
+      <obj_property name="ElementShortName">M_AXIS_TLAST</obj_property>
+      <obj_property name="ObjectShortName">M_AXIS_TLAST</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/M_AXIS_TVALID" type="logic">
+      <obj_property name="ElementShortName">M_AXIS_TVALID</obj_property>
+      <obj_property name="ObjectShortName">M_AXIS_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/M_AXIS" type="protoinst">
+      <obj_property name="ElementShortName">M_AXIS</obj_property>
+      <obj_property name="ObjectShortName">M_AXIS</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/S_AXIS" type="protoinst">
+      <obj_property name="ElementShortName">S_AXIS</obj_property>
+      <obj_property name="ObjectShortName">S_AXIS</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/sys_clk_in" type="logic">
+      <obj_property name="ElementShortName">sys_clk_in</obj_property>
+      <obj_property name="ObjectShortName">sys_clk_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rst_n_in" type="logic">
+      <obj_property name="ElementShortName">rst_n_in</obj_property>
+      <obj_property name="ObjectShortName">rst_n_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_re_0_in" type="array">
+      <obj_property name="ElementShortName">data_re_0_in[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_re_0_in[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_in" type="array">
+      <obj_property name="ElementShortName">data_im_0_in[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_im_0_in[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_re_1_in" type="array">
+      <obj_property name="ElementShortName">data_re_1_in[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_re_1_in[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_1_in" type="array">
+      <obj_property name="ElementShortName">data_im_1_in[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_im_1_in[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_re_0_out" type="array">
+      <obj_property name="ElementShortName">data_re_0_out[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_re_0_out[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_out" type="array">
+      <obj_property name="ElementShortName">data_im_0_out[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_im_0_out[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_re_1_out" type="array">
+      <obj_property name="ElementShortName">data_re_1_out[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_re_1_out[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_1_out" type="array">
+      <obj_property name="ElementShortName">data_im_1_out[23:0]</obj_property>
+      <obj_property name="ObjectShortName">data_im_1_out[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_0_in" type="array">
+      <obj_property name="ElementShortName">addr_0_in[11:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_0_in[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_1_in" type="array">
+      <obj_property name="ElementShortName">addr_1_in[11:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_1_in[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/busy" type="logic">
+      <obj_property name="ElementShortName">busy</obj_property>
+      <obj_property name="ObjectShortName">busy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/request" type="logic">
+      <obj_property name="ElementShortName">request</obj_property>
+      <obj_property name="ObjectShortName">request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rx_ready" type="logic">
+      <obj_property name="ElementShortName">rx_ready</obj_property>
+      <obj_property name="ObjectShortName">rx_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rx_val" type="logic">
+      <obj_property name="ElementShortName">rx_val</obj_property>
+      <obj_property name="ObjectShortName">rx_val</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rx_ack" type="logic">
+      <obj_property name="ElementShortName">rx_ack</obj_property>
+      <obj_property name="ObjectShortName">rx_ack</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/push" type="logic">
+      <obj_property name="ElementShortName">push</obj_property>
+      <obj_property name="ObjectShortName">push</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rx_done" type="logic">
+      <obj_property name="ElementShortName">rx_done</obj_property>
+      <obj_property name="ObjectShortName">rx_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/comp_done" type="logic">
+      <obj_property name="ElementShortName">comp_done</obj_property>
+      <obj_property name="ObjectShortName">comp_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/tx_ready" type="logic">
+      <obj_property name="ElementShortName">tx_ready</obj_property>
+      <obj_property name="ObjectShortName">tx_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/tx_val" type="logic">
+      <obj_property name="ElementShortName">tx_val</obj_property>
+      <obj_property name="ObjectShortName">tx_val</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/tx_ack" type="logic">
+      <obj_property name="ElementShortName">tx_ack</obj_property>
+      <obj_property name="ObjectShortName">tx_ack</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/pop" type="logic">
+      <obj_property name="ElementShortName">pop</obj_property>
+      <obj_property name="ObjectShortName">pop</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/tx_done" type="logic">
+      <obj_property name="ElementShortName">tx_done</obj_property>
+      <obj_property name="ObjectShortName">tx_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/all_done" type="logic">
+      <obj_property name="ElementShortName">all_done</obj_property>
+      <obj_property name="ObjectShortName">all_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/overflow_warn" type="logic">
+      <obj_property name="ElementShortName">overflow_warn</obj_property>
+      <obj_property name="ObjectShortName">overflow_warn</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/rx_single_ndouble_mode" type="logic">
+      <obj_property name="ElementShortName">rx_single_ndouble_mode</obj_property>
+      <obj_property name="ObjectShortName">rx_single_ndouble_mode</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/tx_single_ndouble_mode" type="logic">
+      <obj_property name="ElementShortName">tx_single_ndouble_mode</obj_property>
+      <obj_property name="ObjectShortName">tx_single_ndouble_mode</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/burst_mode_en" type="logic">
+      <obj_property name="ElementShortName">burst_mode_en</obj_property>
+      <obj_property name="ObjectShortName">burst_mode_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_twiddle" type="array">
+      <obj_property name="ElementShortName">addr_twiddle[11:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_twiddle[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/en_A" type="logic">
+      <obj_property name="ElementShortName">en_A</obj_property>
+      <obj_property name="ObjectShortName">en_A</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/en_B" type="logic">
+      <obj_property name="ElementShortName">en_B</obj_property>
+      <obj_property name="ObjectShortName">en_B</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/wr_en_A" type="logic">
+      <obj_property name="ElementShortName">wr_en_A</obj_property>
+      <obj_property name="ObjectShortName">wr_en_A</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/wr_en_B" type="logic">
+      <obj_property name="ElementShortName">wr_en_B</obj_property>
+      <obj_property name="ObjectShortName">wr_en_B</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/dpth_cnt" type="array">
+      <obj_property name="ElementShortName">dpth_cnt[3:0]</obj_property>
+      <obj_property name="ObjectShortName">dpth_cnt[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/brdth_cnt" type="array">
+      <obj_property name="ElementShortName">brdth_cnt[11:0]</obj_property>
+      <obj_property name="ObjectShortName">brdth_cnt[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/alg_ctrl" type="other">
+      <obj_property name="ElementShortName">alg_ctrl</obj_property>
+      <obj_property name="ObjectShortName">alg_ctrl</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_even_c" type="array">
+      <obj_property name="ElementShortName">addr_even_c[11:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_even_c[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_odd_c" type="array">
+      <obj_property name="ElementShortName">addr_odd_c[11:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_odd_c[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/in_even_re" type="array">
+      <obj_property name="ElementShortName">in_even_re[23:0]</obj_property>
+      <obj_property name="ObjectShortName">in_even_re[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/in_even_im" type="array">
+      <obj_property name="ElementShortName">in_even_im[23:0]</obj_property>
+      <obj_property name="ObjectShortName">in_even_im[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/in_odd_re" type="array">
+      <obj_property name="ElementShortName">in_odd_re[23:0]</obj_property>
+      <obj_property name="ObjectShortName">in_odd_re[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/in_odd_im" type="array">
+      <obj_property name="ElementShortName">in_odd_im[23:0]</obj_property>
+      <obj_property name="ObjectShortName">in_odd_im[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/out_even_re" type="array">
+      <obj_property name="ElementShortName">out_even_re[23:0]</obj_property>
+      <obj_property name="ObjectShortName">out_even_re[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/out_even_im" type="array">
+      <obj_property name="ElementShortName">out_even_im[23:0]</obj_property>
+      <obj_property name="ObjectShortName">out_even_im[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/out_odd_re" type="array">
+      <obj_property name="ElementShortName">out_odd_re[23:0]</obj_property>
+      <obj_property name="ObjectShortName">out_odd_re[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/out_odd_im" type="array">
+      <obj_property name="ElementShortName">out_odd_im[23:0]</obj_property>
+      <obj_property name="ObjectShortName">out_odd_im[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/twiddle_re" type="array">
+      <obj_property name="ElementShortName">twiddle_re[23:0]</obj_property>
+      <obj_property name="ObjectShortName">twiddle_re[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/twiddle_im" type="array">
+      <obj_property name="ElementShortName">twiddle_im[23:0]</obj_property>
+      <obj_property name="ObjectShortName">twiddle_im[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/twiddle_en" type="logic">
+      <obj_property name="ElementShortName">twiddle_en</obj_property>
+      <obj_property name="ObjectShortName">twiddle_en</obj_property>
+   </wvobject>
+</wave_config>

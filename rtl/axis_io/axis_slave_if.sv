@@ -291,7 +291,7 @@ module axis_slave_if(
 
     assert property (@(posedge clk) disable iff (!rst_n) (S_AXIS_TREADY & S_AXIS_TVALID |-> fifo_wr_en^skid_buffer_en));
     
-    assert property (@(posedge clk) disable iff (!rst_n) (s_fifo_rd_done |-> ##[1:3] addr_mem === OUTPUT_MEM_SIZE-1));
+    assert property (@(posedge clk) disable iff (!rst_n) (s_fifo_rd_done |-> ##[1:3] addr_mem === FFT_MEM_SIZE-1));
     
     // synthesis translate_on
 

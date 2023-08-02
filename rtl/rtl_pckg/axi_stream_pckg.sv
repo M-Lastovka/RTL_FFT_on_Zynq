@@ -48,15 +48,14 @@ parameter M_PACKET_CNT = FFT_MEM_SIZE*(VLW_WDT/M_TDATA_WDT);
 parameter M_FIFO_WR_FINAL = ((M_PACKET_CNT % M_FIFO_SIZE)-1) == -1 ? M_FIFO_SIZE-1 : ((M_PACKET_CNT % M_FIFO_SIZE)-1); //value at which the fifo_wr_ptr should stop
 
 function automatic void set_mem(ref logic [VLW_WDT-1:0] inputs_mem[FFT_MEM_SIZE-1:0], int index, real re, real im);
-    assert(index >= FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);
+    assert(index < FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);
     inputs_mem[index][VLW_WDT-1 -: VLW_WDT/2] = $rtoi(re);
     inputs_mem[index][0 +: VLW_WDT/2] = $rtoi(im);
 endfunction
 
-function automatic real get_mem(ref logic [VLW_WDT-1:0] outputs_mem[FFT_MEM_SIZE-1:0], int index, string re_or_im);
-    assert(index >= FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);
-    assert(re_or_im == "re" | re_or_im == "im") else $fatal("Specifier %s must be re or im! Aborting simulation!", re_or_im);
-    if(re_or_im == "re")
+function automatic real get_mem(ref logic [VLW_WDT-1:0] outputs_mem[FFT_MEM_SIZE-1:0], int index, logic re_n_im);
+    assert(index < FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);
+    if(re_n_im)
         return $itor(outputs_mem[index][VLW_WDT-1 -: VLW_WDT/2]);
     else
         return $itor(outputs_mem[index][0 +: VLW_WDT/2]);
