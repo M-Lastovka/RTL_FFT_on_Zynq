@@ -20,15 +20,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="42.824501 us"></ZoomStartTime>
-      <ZoomEndTime time="50.624502 us"></ZoomEndTime>
-      <Cursor1Time time="49.324501 us"></Cursor1Time>
+      <ZoomStartTime time="285,294.230 ns"></ZoomStartTime>
+      <ZoomEndTime time="285,309.051 ns"></ZoomEndTime>
+      <Cursor1Time time="285,299.350 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="197"></NameColumnWidth>
-      <ValueColumnWidth column_width="102"></ValueColumnWidth>
+      <NameColumnWidth column_width="193"></NameColumnWidth>
+      <ValueColumnWidth column_width="88"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="10" />
+   <WVObjectSize size="14" />
    <wvobject fp_name="/tb_top/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -56,10 +56,12 @@
    <wvobject fp_name="group8445" type="group">
       <obj_property name="label">FFT top level</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_re_0_in" type="array">
          <obj_property name="ElementShortName">data_re_0_in[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_re_0_in[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_in" type="array">
          <obj_property name="ElementShortName">data_im_0_in[23:0]</obj_property>
@@ -70,11 +72,17 @@
          <obj_property name="ElementShortName">data_re_0_out[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_re_0_out[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/push" type="logic">
+         <obj_property name="ElementShortName">push</obj_property>
+         <obj_property name="ObjectShortName">push</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_out" type="array">
          <obj_property name="ElementShortName">data_im_0_out[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_im_0_out[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_0_in" type="array">
          <obj_property name="ElementShortName">addr_0_in[11:0]</obj_property>
@@ -288,11 +296,10 @@
    <wvobject fp_name="group8573" type="group">
       <obj_property name="label">AXIS MASTER IF</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/M_AXIS_TDATA" type="array">
          <obj_property name="ElementShortName">M_AXIS_TDATA[31:0]</obj_property>
          <obj_property name="ObjectShortName">M_AXIS_TDATA[31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
          <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/M_AXIS_TLAST" type="logic">
@@ -462,6 +469,92 @@
    <wvobject fp_name="/tb_top/output_mem_gen" type="array">
       <obj_property name="ElementShortName">output_mem_gen[4095:0][63:0]</obj_property>
       <obj_property name="ObjectShortName">output_mem_gen[4095:0][63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/output_mem_dut" type="array">
+      <obj_property name="ElementShortName">output_mem_dut[4095:0][63:0]</obj_property>
+      <obj_property name="ObjectShortName">output_mem_dut[4095:0][63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/mem/ram_0/ram_A_debug" type="array">
+      <obj_property name="ElementShortName">ram_A_debug[4095:0][47:0]</obj_property>
+      <obj_property name="ObjectShortName">ram_A_debug[4095:0][47:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/mem/ram_0/ram_B_debug" type="array">
+      <obj_property name="ElementShortName">ram_B_debug[4095:0][47:0]</obj_property>
+      <obj_property name="ObjectShortName">ram_B_debug[4095:0][47:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="group4503" type="group">
+      <obj_property name="label">BUTTERFLY</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/in_even_re" type="array">
+         <obj_property name="ElementShortName">in_even_re[23:0]</obj_property>
+         <obj_property name="ObjectShortName">in_even_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/in_even_im" type="array">
+         <obj_property name="ElementShortName">in_even_im[23:0]</obj_property>
+         <obj_property name="ObjectShortName">in_even_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/in_odd_re" type="array">
+         <obj_property name="ElementShortName">in_odd_re[23:0]</obj_property>
+         <obj_property name="ObjectShortName">in_odd_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/in_odd_im" type="array">
+         <obj_property name="ElementShortName">in_odd_im[23:0]</obj_property>
+         <obj_property name="ObjectShortName">in_odd_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/fsm/brdth_cnt" type="array">
+         <obj_property name="ElementShortName">brdth_cnt[11:0]</obj_property>
+         <obj_property name="ObjectShortName">brdth_cnt[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/fsm/dpth_cnt" type="array">
+         <obj_property name="ElementShortName">dpth_cnt[3:0]</obj_property>
+         <obj_property name="ObjectShortName">dpth_cnt[3:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/out_even_re" type="array">
+         <obj_property name="ElementShortName">out_even_re[23:0]</obj_property>
+         <obj_property name="ObjectShortName">out_even_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/out_even_im" type="array">
+         <obj_property name="ElementShortName">out_even_im[23:0]</obj_property>
+         <obj_property name="ObjectShortName">out_even_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/out_odd_re" type="array">
+         <obj_property name="ElementShortName">out_odd_re[23:0]</obj_property>
+         <obj_property name="ObjectShortName">out_odd_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/out_odd_im" type="array">
+         <obj_property name="ElementShortName">out_odd_im[23:0]</obj_property>
+         <obj_property name="ObjectShortName">out_odd_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/twiddle_re" type="array">
+         <obj_property name="ElementShortName">twiddle_re[23:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/bttr2/twiddle_im" type="array">
+         <obj_property name="ElementShortName">twiddle_im[23:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>

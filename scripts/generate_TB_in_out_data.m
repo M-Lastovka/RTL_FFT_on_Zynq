@@ -1,10 +1,10 @@
 %% script to generate input (time domain) and output data (frequency domain) for the testbench
 
 size_of_fft = 2^12;
-max_val = 2^7-1;
-N_testcase = 3;
-TD = nan(size_of_fft, N_testcase);
-FD = nan(size_of_fft, N_testcase);
+max_val = 2^12-1;
+N_testcase = 7;
+TD = zeros(size_of_fft, N_testcase);
+FD = zeros(size_of_fft, N_testcase);
 
 if log2(size_of_fft) ~= round(log2(size_of_fft))
     printf("Invalid N of samples, must be power of 2\n"); 
@@ -21,6 +21,19 @@ FD(:,2) = fft(TD(:,2));
 
 TD(:,3) = max_val*(cos(2*pi*x/20) + 1i*sin(2*pi*x/20));
 FD(:,3) = fft(TD(:,3));
+
+TD(1,4) = max_val;
+FD(:,4) = fft(TD(:,4));
+
+TD(1,5) = max_val*1i;
+FD(:,5) = fft(TD(:,5));
+
+TD(:,6) = max_val*ones(size_of_fft, 1)*1i;
+FD(:,6) = fft(TD(:,6));
+
+TD(2,7) = max_val;
+TD(4096,7) = -max_val;
+FD(:,7) = fft(TD(:,7));
 
 %% write the testcases to file
 
@@ -55,3 +68,9 @@ end
 % Close the files
 fclose(fileID_in);
 fclose(fileID_out);
+
+even_in = 2406 - 1i*7788;
+odd_in = -6300 + 1i*6300;
+tw = (2965820 - 1i*2965820)/2^22;
+even_out = even_in + tw*odd_in;
+odd_out = even_in - tw*odd_in;

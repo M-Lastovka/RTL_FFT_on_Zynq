@@ -56,9 +56,9 @@ endfunction
 function automatic real get_mem(ref logic [VLW_WDT-1:0] outputs_mem[FFT_MEM_SIZE-1:0], int index, logic re_n_im);
     assert(index < FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);
     if(re_n_im)
-        return $itor(outputs_mem[index][VLW_WDT-1 -: VLW_WDT/2]);
+        return $itor($signed(outputs_mem[index][VLW_WDT-1 -: VLW_WDT/2]));
     else
-        return $itor(outputs_mem[index][0 +: VLW_WDT/2]);
+        return $itor($signed(outputs_mem[index][0 +: VLW_WDT/2]));
 endfunction
 
 endpackage

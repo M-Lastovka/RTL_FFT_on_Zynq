@@ -46,12 +46,12 @@ function automatic void compare_res(logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_S
 
     for(int i = 0; i < FFT_MEM_SIZE; i++) begin
         sqr_err = (get_mem(output_mem_dut, i, re) - get_mem(output_mem_gen, i, re))**2 + (get_mem(output_mem_dut, i, im) - get_mem(output_mem_gen, i, im))**2;
-        $display("@ index %2d DUT: %f + j*%f; REF: %f + j*%f, squared error: %f", i, 
+        $display("@ index %2d DUT: %.3f + j*%.3f; REF: %.3f + j*%.3f, squared error: %.6f", i, 
             get_mem(output_mem_dut, i, re), get_mem(output_mem_dut, i, im), get_mem(output_mem_gen, i, re), get_mem(output_mem_gen, i, im), sqr_err);
         mn_sqr_err += sqr_err;
     end
     mn_sqr_err = mn_sqr_err/FFT_MEM_SIZE;
-    $display("Total MSE in this batch: %f", mn_sqr_err);
+    $display("Total MSE in this batch: %.6f", mn_sqr_err);
 
 endfunction
 

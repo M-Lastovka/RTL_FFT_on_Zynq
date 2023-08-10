@@ -46,8 +46,8 @@ task frnt_door_mems_write(
   logic [S_TDATA_WDT-1:0] axis_word = '0;
   int temp_index;
   logic re_n_im;
-  //logic [C_FFT_SIZE_LOG2-1:0] dut_addr     = '0;
-  //logic [C_FFT_SIZE_LOG2-1:0] dut_addr_rev = '0;
+  logic [C_FFT_SIZE_LOG2-1:0] dut_addr     = '0;
+  logic [C_FFT_SIZE_LOG2-1:0] dut_addr_rev = '0;
 
   $display("Frontdoor write to FFT started\n");
 
@@ -70,8 +70,8 @@ task frnt_door_mems_write(
 
   $display("New inputs have been written through AXIS\n");
 
-  ////check whether inputs have been transmitted correctly through backdoor
-  ////TODO: compilation guard
+  //check whether inputs have been transmitted correctly through backdoor
+  //TODO: compilation guard
   //@(`dut_path.rx_done);
   //#1ns;
   //for(int i = 0; i < FFT_MEM_SIZE; i++) begin
@@ -81,12 +81,10 @@ task frnt_door_mems_write(
   //    dut_addr_rev[C_FFT_SIZE_LOG2-1-j] = dut_addr[j];
   //  end
   //
-  //  if(`dut_mem_path.activ_mem[i] == input_mem_gen[i]) begin
-  //    `verb_filt(VER_HIGH)
-  //      $display("The DUT activations memory : %h at line %3d does match with the TB generated data : %h", `activ_mem_path.activ_mem[i], i, input_mem_gen[i]);  
-  //    `filt_end
+  //  if(`dut_mem_path.ram_A_debug[i] == input_mem_gen[dut_addr_rev]) begin
+  //    $display("The DUT activations memory : %8d at line %3d does match with the TB generated data : %8d", `dut_mem_path.ram_A_debug[i], i, input_mem_gen[dut_addr_rev]);  
   //  end else begin
-  //    $error("The DUT activations memory : %h at line %3d does not match with the TB generated data : %h", `activ_mem_path.activ_mem[i], i, input_mem_gen[i]);  
+  //    $error("The DUT activations memory : %8d at line %3d does not match with the TB generated data : %8d", `dut_mem_path.ram_A_debug[i], i, input_mem_gen[dut_addr_rev]);  
   //  end
   //end
 
