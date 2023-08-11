@@ -56,6 +56,8 @@ tb_scoreboard   scoreboard;
 block_vip_fft_axi4stream_vip_1_0_slv_t  s_axis_ext_agent;
 block_vip_fft_axi4stream_vip_0_0_mst_t  m_axis_ext_agent;
 
+int test_case_num;
+
 // Clock generation
 always 
 #1.5ns 
@@ -75,8 +77,6 @@ end
 
 initial begin
 
-  int line_num = 1;
-
   m_axis_ext_agent = new("m_axis_ext_agent", `m_axis_ext_if_path);
   m_axis_ext_agent.start_master();
 
@@ -90,7 +90,9 @@ initial begin
 
     for(int k = 0; k < MAX_TRANS_CNT; k++) begin
 
-      generator.input_data_set(input_mem_gen, output_mem_gen, line_num);
+      test_case_num = k % 7;
+
+      generator.input_data_set(input_mem_gen, output_mem_gen, test_case_num);
 
       //write to memories (through AXIS)
       driver.frnt_door_mems_write(input_mem_gen);
@@ -100,7 +102,6 @@ initial begin
       monitor.frnt_door_get_data(output_mem_dut);
 
       scoreboard.compare_res(output_mem_dut, output_mem_gen);
-      $fatal("DEBUG: END TEST");
 
     end
 

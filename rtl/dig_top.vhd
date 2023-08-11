@@ -197,7 +197,7 @@ BEGIN
     request <= s_axis_if_busy;
 
     --FFT address arbitration
-    fft_addr_arbitr : process (s_axis_if_busy, s_axis_if_addr, m_axis_if_addr)
+    fft_addr_arbitr : process (m_axis_if_busy, s_axis_if_busy, s_axis_if_addr, m_axis_if_addr)
     begin
         if s_axis_if_busy = '1' then
             addr_0_in <= s_axis_if_addr;

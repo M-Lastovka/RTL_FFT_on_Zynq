@@ -1,7 +1,7 @@
 %% script to generate input (time domain) and output data (frequency domain) for the testbench
 
 size_of_fft = 2^12;
-max_val = 2^12-1;
+max_val = 2^10-1;
 N_testcase = 7;
 TD = zeros(size_of_fft, N_testcase);
 FD = zeros(size_of_fft, N_testcase);
