@@ -23,7 +23,6 @@
 package axi_stream_pckg;
 
 //FFT TODO: make this more robust
-parameter VLW_WDT         = 64; 
 parameter C_FFT_SIZE_LOG2 = 12;
 parameter FFT_MEM_SIZE = 2**C_FFT_SIZE_LOG2;
 parameter OUTPUT_MEM_OFFSET = 0;
@@ -46,6 +45,8 @@ parameter M_IF_BUFFER_SIZE = VLW_WDT/M_TDATA_WDT;
 
 parameter M_PACKET_CNT = FFT_MEM_SIZE*(VLW_WDT/M_TDATA_WDT);
 parameter M_FIFO_WR_FINAL = ((M_PACKET_CNT % M_FIFO_SIZE)-1) == -1 ? M_FIFO_SIZE-1 : ((M_PACKET_CNT % M_FIFO_SIZE)-1); //value at which the fifo_wr_ptr should stop
+
+parameter VLW_WDT         = 2*M_TDATA_WDT; 
 
 function automatic void set_mem(ref logic [VLW_WDT-1:0] inputs_mem[FFT_MEM_SIZE-1:0], int index, real re, real im);
     assert(index < FFT_MEM_SIZE) else $fatal("Index %d out of range! Aborting simulation!", index);

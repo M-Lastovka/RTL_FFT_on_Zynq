@@ -20,13 +20,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.014929500 ms"></ZoomStartTime>
-      <ZoomEndTime time="14.594929501 ms"></ZoomEndTime>
-      <Cursor1Time time="2.714929500 ms"></Cursor1Time>
+      <ZoomStartTime time="2,959.409834 us"></ZoomStartTime>
+      <ZoomEndTime time="3,104.209835 us"></ZoomEndTime>
+      <Cursor1Time time="3,080.076501 us"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="274"></NameColumnWidth>
-      <ValueColumnWidth column_width="161"></ValueColumnWidth>
+      <ValueColumnWidth column_width="155"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="14" />
    <wvobject fp_name="/tb_top/clk" type="logic">
@@ -61,15 +61,13 @@
          <obj_property name="ElementShortName">data_re_0_in[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_re_0_in[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_in" type="array">
          <obj_property name="ElementShortName">data_im_0_in[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_im_0_in[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/push" type="logic">
          <obj_property name="ElementShortName">push</obj_property>
@@ -79,15 +77,13 @@
          <obj_property name="ElementShortName">data_re_0_out[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_re_0_out[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/data_im_0_out" type="array">
          <obj_property name="ElementShortName">data_im_0_out[23:0]</obj_property>
          <obj_property name="ObjectShortName">data_im_0_out[23:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/fft_block/addr_0_in" type="array">
          <obj_property name="ElementShortName">addr_0_in[11:0]</obj_property>
@@ -339,10 +335,6 @@
          <obj_property name="ElementShortName">pop</obj_property>
          <obj_property name="ObjectShortName">pop</obj_property>
       </wvobject>
-      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/tx_ready" type="logic">
-         <obj_property name="ElementShortName">tx_ready</obj_property>
-         <obj_property name="ObjectShortName">tx_ready</obj_property>
-      </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/tx_done" type="logic">
          <obj_property name="ElementShortName">tx_done</obj_property>
          <obj_property name="ObjectShortName">tx_done</obj_property>
@@ -446,10 +438,6 @@
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/m_axis_tlast_i" type="logic">
          <obj_property name="ElementShortName">m_axis_tlast_i</obj_property>
          <obj_property name="ObjectShortName">m_axis_tlast_i</obj_property>
-      </wvobject>
-      <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/tx_ready" type="logic">
-         <obj_property name="ElementShortName">tx_ready</obj_property>
-         <obj_property name="ObjectShortName">tx_ready</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_top/dut_wrapp/block_vip_fft_i/dig_top_0/inst/master_if/m_wr_curr_state" type="array">
          <obj_property name="ElementShortName">m_wr_curr_state[31:0]</obj_property>

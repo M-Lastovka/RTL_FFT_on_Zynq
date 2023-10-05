@@ -74,7 +74,6 @@ module axis_slave_if(
 
     logic [$clog2(S_IF_BUFFER_SIZE):0] s_if_buffer_cnt;
     logic [S_TDATA_WDT-1:0] s_if_buffer_unpack[S_IF_BUFFER_SIZE-1:0];
-    logic [VLW_WDT-1:0] s_if_buffer_pack;
     logic s_axis_tvalid_i;
     logic s_axis_tlast_i;
     logic s_buff_tlast;

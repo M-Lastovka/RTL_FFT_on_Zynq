@@ -100,7 +100,7 @@ initial begin
       monitor.s_gen_tready();
 
       monitor.frnt_door_get_data(output_mem_dut);
-
+      
       scoreboard.compare_res(output_mem_dut, output_mem_gen);
 
     end

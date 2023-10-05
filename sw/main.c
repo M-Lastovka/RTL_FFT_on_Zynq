@@ -10,11 +10,14 @@
 #define DMA_TRANSFER_SIZE FFT_SIZE*2	//in MM2S and S2MM we send 2*4096 (re and im parts) 32 bit words
 
 
-static XAxiDma dma_driver;	//DMA driver instance
-static XAxiDma_Config *dma_cfg;
+//static XAxiDma dma_driver;	//DMA driver instance
+//static XAxiDma_Config *dma_cfg;
 
 int main()
 {
+	XAxiDma dma_driver;	//DMA driver instance
+	XAxiDma_Config *dma_cfg;
+
 	s32 status;
 	u32 data_mm2s[DMA_TRANSFER_SIZE]; //data which gets sent to PS -> PL
 	u32 data_s2mm[DMA_TRANSFER_SIZE]; //data from PL which gets sent PL -> PS
@@ -26,9 +29,16 @@ int main()
 	//init DMA driver
 	dma_cfg = XAxiDma_LookupConfig(DMA_DEV_ID);
 	status = XAxiDma_CfgInitialize(&dma_driver, dma_cfg);
-	if(!dma_cfg || !status)
+
+	if(dma_cfg == NULL)
 	{
-		print("Fatal error when setting up DMA driver!\n");
+		print("Fatal error when setting up DMA config!\n");
+		return XST_FAILURE;
+	}
+
+	if(status != XST_SUCCESS)
+	{
+		print("Fatal error when initializing DMA!\n");
 		return XST_FAILURE;
 	}
 
@@ -38,11 +48,11 @@ int main()
 		data_mm2s[2*i] = 0;
 		data_mm2s[2*i+1] = 0;
 	}
-	data_mm2s[0] = 255;
+	data_mm2s[0] = 2047;
 
 	//schedule data move operation to PL
 	status = XAxiDma_SimpleTransfer(&dma_driver, data_mm2s, DMA_TRANSFER_SIZE*4, XAXIDMA_DMA_TO_DEVICE);
-	if(!status)
+	if(status != XST_SUCCESS)
 	{
 		print("Fatal error when scheduling PS->PL transfer!\n");
 		return XST_FAILURE;
@@ -61,7 +71,7 @@ int main()
 
 	//schedule data move operation to PS
 	status = XAxiDma_SimpleTransfer(&dma_driver, data_s2mm, DMA_TRANSFER_SIZE*4, XAXIDMA_DEVICE_TO_DMA);
-	if(!status)
+	if(status != XST_SUCCESS)
 	{
 		print("Fatal error when scheduling PL->PS transfer!\n");
 		return XST_FAILURE;

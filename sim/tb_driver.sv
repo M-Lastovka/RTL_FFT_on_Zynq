@@ -49,7 +49,7 @@ task frnt_door_mems_write(
   logic [C_FFT_SIZE_LOG2-1:0] dut_addr     = '0;
   logic [C_FFT_SIZE_LOG2-1:0] dut_addr_rev = '0;
 
-  $display("Frontdoor write to FFT started\n");
+  $display("Frontdoor write to FFT started @ time %t\n", $time);
 
   $display("Writing new inputs through AXIS\n");
   axis_word = '0;

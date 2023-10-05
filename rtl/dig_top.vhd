@@ -46,7 +46,23 @@ ENTITY dig_top IS
         M_AXIS_TREADY	: IN  std_logic;                                        --slave ready
         M_AXIS_TDATA	: OUT std_logic_vector(M_TDATA_WDT-1 DOWNTO 0);         --data in
         M_AXIS_TLAST	: OUT std_logic;                                        --indicates boundary of last packet
-        M_AXIS_TVALID	: OUT std_logic
+        M_AXIS_TVALID	: OUT std_logic;
+
+        ----------------------Observation signals--------------------------------
+
+        s_axis_if_busy_t    : OUT std_logic;
+        m_axis_if_busy_t    : OUT std_logic;
+        rx_ready_t          : OUT std_logic;
+        rx_done_t           : OUT std_logic;
+        tx_ready_t          : OUT std_logic;
+        tx_start_t          : OUT std_logic;
+        tx_done_t           : OUT std_logic;
+        comp_done_t         : OUT std_logic;
+        request_t           : OUT std_logic;
+        busy_t              : OUT std_logic;
+        pop_t               : OUT std_logic;
+        push_t              : OUT std_logic
+
   
   );
 END dig_top;
@@ -89,6 +105,9 @@ ARCHITECTURE  rtl OF dig_top IS
     SIGNAL m_axis_if_addr           :    std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
     SIGNAL s_axis_if_addr           :    std_logic_vector(C_FFT_SIZE_LOG2-1 DOWNTO 0);
     SIGNAL s_axis_if_busy           :    std_logic;
+
+    SIGNAL tx_start                 :    std_logic;
+    SIGNAL comp_done_i              :    std_logic;
     
     COMPONENT fft_dig_top IS
         PORT ( 
@@ -154,7 +173,7 @@ ARCHITECTURE  rtl OF dig_top IS
             data_re_0_out   : IN  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
             data_im_0_out   : IN  std_logic_vector (C_SAMPLE_WDT-1 DOWNTO 0);
             pop             : OUT std_logic;
-            tx_ready        : IN  std_logic;
+            tx_start        : IN  std_logic;
             tx_done         : OUT std_logic;
             m_axis_if_busy  : OUT std_logic
            );
@@ -195,6 +214,21 @@ BEGIN
     burst_mode_en          <= '1';
 
     request <= s_axis_if_busy;
+
+    --TX start generation (for AXIS MASTER IF)
+    tx_start_gen : process(clk, tx_ready)
+    begin
+        if(rising_edge(clk)) then
+            if(rst_n = '0') then
+                comp_done_i <= '0';
+            else
+                comp_done_i <= comp_done;
+            end if;
+        end if;
+
+        tx_start <= comp_done_i and tx_ready;
+    end process tx_start_gen;
+
 
     --FFT address arbitration
     fft_addr_arbitr : process (m_axis_if_busy, s_axis_if_busy, s_axis_if_addr, m_axis_if_addr)
@@ -257,7 +291,7 @@ BEGIN
             data_re_0_out   => data_re_0_out,
             data_im_0_out   => data_im_0_out,
             pop             => pop,
-            tx_ready        => tx_ready,
+            tx_start        => tx_start,
             tx_done         => tx_done,
             m_axis_if_busy  => m_axis_if_busy
            );
@@ -279,6 +313,20 @@ BEGIN
             rx_done         => rx_done,
             s_axis_if_busy  => s_axis_if_busy
            );
+
+    --assign test observation signals
+    s_axis_if_busy_t <= s_axis_if_busy;
+    m_axis_if_busy_t <= m_axis_if_busy;
+    rx_ready_t       <= rx_ready;     
+    rx_done_t        <= rx_done;       
+    tx_ready_t       <= tx_ready;      
+    tx_start_t       <= tx_start;      
+    tx_done_t        <= tx_done;       
+    comp_done_t      <= comp_done;     
+    request_t        <= request;       
+    busy_t           <= busy;          
+    pop_t            <= pop;           
+    push_t           <= push;          
     
 
 END rtl;

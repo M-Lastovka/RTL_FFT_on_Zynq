@@ -1,11 +1,10 @@
 ----------------------------------------------------------------------------------
--- Create Date: 07/17/2021 05:27:38 PM:
+-- Create Date: 08/17/2021 05:27:38 PM:
 -- Module Name: fft_twiddle_LUT - rtl
 -- Description: LUT for roots of unity, a.k.a twiddle factors
--- Dependencies: fft_pckg 
+-- Dependencies: dig_top_pckg 
 -- Additional Comments: This code is auto-generated, do NOT edit manually! 
 ----------------------------------------------------------------------------------
-
 
 
 LIBRARY IEEE;

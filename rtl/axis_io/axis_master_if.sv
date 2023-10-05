@@ -43,7 +43,7 @@ module axis_master_if(
 
     //control
     output  logic pop,
-    input   logic tx_ready,
+    input   logic tx_start,
     output  logic tx_done,
     output  logic m_axis_if_busy
 
@@ -199,7 +199,7 @@ module axis_master_if(
             m_wr_next_state = M_WR_IDLE;
 
             casez(m_wr_curr_state)
-                M_WR_IDLE : m_wr_next_state = tx_ready & m_rd_curr_state == M_RD_IDLE ? M_WR_INIT : M_WR_IDLE; 
+                M_WR_IDLE : m_wr_next_state = tx_start & m_rd_curr_state == M_RD_IDLE ? M_WR_INIT : M_WR_IDLE; 
                 M_WR_INIT : m_wr_next_state = M_WR_FIFO; 
                 M_WR_FIFO : m_wr_next_state = m_fifo_wr_done ? M_WR_WAIT : M_WR_FIFO; //everything has been read from memory and buffer is empty
                 M_WR_WAIT : m_wr_next_state = m_rd_done ? M_WR_IDLE : M_WR_WAIT; //wait for read fsm to finish
@@ -310,7 +310,7 @@ module axis_master_if(
 
     always @(posedge clk) assert (!(fifo_wr_en === 1'b1 & fifo_rd_en === 1'b1 & fifo_rd_ptr == fifo_wr_ptr) | !rst_n) else $error("Cannot read and write to the same position in fifo!");
 
-    always @(posedge clk) assert (m_axis_if_addr < FFT_MEM_SIZE) else $error("Signal for addressing FFT block from AXIS master has an invalid value!");
+    always @(posedge clk) assert (m_axis_if_addr < FFT_MEM_SIZE) else $error("Signal for addressing FFT block from AXIS master has an invalid value: %d!", m_axis_if_addr);
 
     assert property (@(posedge clk) disable iff (!rst_n) (m_rd_curr_state == M_RD_DONE |-> m_wr_curr_state == M_WR_IDLE));
 

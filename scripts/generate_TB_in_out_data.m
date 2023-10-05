@@ -1,7 +1,7 @@
 %% script to generate input (time domain) and output data (frequency domain) for the testbench
 
 size_of_fft = 2^12;
-max_val = 2^10-1;
+max_val = 2^11-1;
 N_testcase = 7;
 TD = zeros(size_of_fft, N_testcase);
 FD = zeros(size_of_fft, N_testcase);
@@ -25,14 +25,14 @@ FD(:,3) = fft(TD(:,3));
 TD(1,4) = max_val;
 FD(:,4) = fft(TD(:,4));
 
-TD(1,5) = max_val*1i;
+TD(:,5) = max_val*(2*(rand(size_of_fft,1) - 1) + 1i*2*(rand(size_of_fft,1) - 1));
 FD(:,5) = fft(TD(:,5));
 
 TD(:,6) = max_val*ones(size_of_fft, 1)*1i;
 FD(:,6) = fft(TD(:,6));
 
 TD(2,7) = max_val;
-TD(4096,7) = -max_val;
+TD(end,7) = -max_val;
 FD(:,7) = fft(TD(:,7));
 
 %% write the testcases to file
@@ -69,8 +69,8 @@ end
 fclose(fileID_in);
 fclose(fileID_out);
 
-even_in = 2406 - 1i*7788;
-odd_in = -6300 + 1i*6300;
-tw = (2965820 - 1i*2965820)/2^22;
-even_out = even_in + tw*odd_in;
-odd_out = even_in - tw*odd_in;
+even_in = -20 + 1i*16;
+odd_in = 4 + 1i*26;
+tw = (-1605090 - 1i*3875031)/2^22;
+even_out = even_in + tw*odd_in
+odd_out = even_in - tw*odd_in

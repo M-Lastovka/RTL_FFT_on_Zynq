@@ -74,7 +74,6 @@ task frnt_door_get_data(ref logic [VLW_WDT-1:0] output_mem_dut[FFT_MEM_SIZE-1:0]
       data_packet_pack_im = $itor($signed(unpacked_to_packed(data_packet_unpack)));
 
       set_mem(output_mem_dut, packet_cnt, data_packet_pack_re, data_packet_pack_im);
-
       packet_cnt++;
         
     end while (!s_axis_monitor_trans.get_last()); 

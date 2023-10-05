@@ -197,9 +197,13 @@ BEGIN
         --overflow detection
         IF ( (par_prod_ac_i(C_SAMPLE_WDT-1) /= par_prod_bd_i(C_SAMPLE_WDT-1)) AND ((prod_re_unsat_c(C_SAMPLE_WDT-1) XOR par_prod_bd_i(C_SAMPLE_WDT-1)) = '0') ) THEN 
             IF (par_prod_bd_i(C_SAMPLE_WDT-1) = '1') THEN   
-                prod_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --prod_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive
+                prod_re_c(C_SAMPLE_WDT-1) <= '0';
+                prod_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1');       
             ELSE
-                prod_re_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --prod_re_c <= to_signed(-2**(C_SAMPLE_WDT-1)+1,C_SAMPLE_WDT);     --saturate to max negative
+                prod_re_c(C_SAMPLE_WDT-1) <= '1';
+                prod_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0');
             END IF;
             
             -- synthesis translate_off
@@ -216,9 +220,13 @@ BEGIN
         --overflow detection
         IF ( (par_prod_bc_i(C_SAMPLE_WDT-1) = par_prod_ad_i(C_SAMPLE_WDT-1)) AND ((prod_im_unsat_c(C_SAMPLE_WDT-1) XOR par_prod_bc_i(C_SAMPLE_WDT-1)) = '1') ) THEN 
             IF (par_prod_bc_i(C_SAMPLE_WDT-1) = '1') THEN   
-                prod_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --prod_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                prod_im_c(C_SAMPLE_WDT-1) <= '0';
+                prod_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1');
             ELSE
-                prod_im_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --prod_im_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                prod_im_c(C_SAMPLE_WDT-1) <= '1';
+                prod_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0');
             END IF;
             
             -- synthesis translate_off
@@ -266,9 +274,13 @@ BEGIN
         --overflow detection
         IF ( (prod_re_i(C_SAMPLE_WDT-1) = even_re_del(C_BUFFER_DELAY)(C_SAMPLE_WDT-1)) AND ((out_even_re_unsat_c(C_SAMPLE_WDT-1) XOR prod_re_i(C_SAMPLE_WDT-1)) = '1') ) THEN 
             IF (out_even_re_unsat_c(C_SAMPLE_WDT-1) = '1') THEN   
-                out_even_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --out_even_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                out_even_re_c(C_SAMPLE_WDT-1) <= '0';
+                out_even_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1');
             ELSE
-                out_even_re_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --out_even_re_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                out_even_re_c(C_SAMPLE_WDT-1) <= '1';
+                out_even_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0');
             END IF;
             
             -- synthesis translate_off
@@ -285,9 +297,13 @@ BEGIN
         --overflow detection
         IF ( (prod_im_i(C_SAMPLE_WDT-1) = even_im_del(C_BUFFER_DELAY)(C_SAMPLE_WDT-1)) AND ((out_even_im_unsat_c(C_SAMPLE_WDT-1) XOR prod_im_i(C_SAMPLE_WDT-1)) = '1') ) THEN 
             IF (out_even_im_unsat_c(C_SAMPLE_WDT-1) = '1') THEN   
-                out_even_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --out_even_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive  
+                out_even_im_c(C_SAMPLE_WDT-1) <= '0';
+                out_even_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1');       
             ELSE
-                out_even_im_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --out_even_im_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                out_even_im_c(C_SAMPLE_WDT-1) <= '1';
+                out_even_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0'); 
             END IF;
             
             -- synthesis translate_off
@@ -304,9 +320,13 @@ BEGIN
         --overflow detection
         IF ( (even_re_del(C_BUFFER_DELAY)(C_SAMPLE_WDT-1) /= prod_re_i(C_SAMPLE_WDT-1)) AND ((out_odd_re_unsat_c(C_SAMPLE_WDT-1) XOR prod_re_i(C_SAMPLE_WDT-1)) = '0') ) THEN 
             IF (prod_re_i(C_SAMPLE_WDT-1) = '1') THEN   
-                out_odd_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --out_odd_re_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                out_odd_re_c(C_SAMPLE_WDT-1) <= '0';
+                out_odd_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1'); 
             ELSE
-                out_odd_re_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --out_odd_re_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                out_odd_re_c(C_SAMPLE_WDT-1) <= '1';
+                out_odd_re_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0'); 
             END IF;
             
             -- synthesis translate_off
@@ -323,9 +343,13 @@ BEGIN
         --overflow detection
         IF ( (even_im_del(C_BUFFER_DELAY)(C_SAMPLE_WDT-1) /= prod_im_i(C_SAMPLE_WDT-1)) AND ((out_odd_im_unsat_c(C_SAMPLE_WDT-1) XOR prod_im_i(C_SAMPLE_WDT-1)) = '0') ) THEN --overflow detection
             IF (prod_im_i(C_SAMPLE_WDT-1) = '1') THEN   
-                out_odd_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                --out_odd_im_c <= to_signed(2**(C_SAMPLE_WDT-1)-1,C_SAMPLE_WDT);     --saturate to max positive         
+                out_odd_im_c(C_SAMPLE_WDT-1) <= '0';
+                out_odd_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '1'); 
             ELSE
-                out_odd_im_c <= to_signed(-2**(C_SAMPLE_WDT-1),C_SAMPLE_WDT);     --saturate to max negative
+                --out_odd_im_c <= to_signed(-2**(C_SAMPLE_WDT-1)+1,C_SAMPLE_WDT);     --saturate to max negative
+                out_odd_im_c(C_SAMPLE_WDT-1) <= '1';
+                out_odd_im_c(C_SAMPLE_WDT-2 DOWNTO 0) <= (OTHERS => '0'); 
             END IF;
             
             -- synthesis translate_off

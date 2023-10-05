@@ -40,7 +40,6 @@ PACKAGE fft_pckg IS
     CONSTANT C_BUFFER_DELAY          : natural := 3;                          --how many clock cycles does it take to fill pipeline (sets delay between read and write)  
     CONSTANT C_SCALE_LOG2            : natural := C_SAMPLE_WDT-2;             --scaling constant for all the twiddle factors
     
-    
     TYPE alg_command IS (
         SLEEP,
         RX,
@@ -64,7 +63,5 @@ PACKAGE fft_pckg IS
 END PACKAGE fft_pckg;
 
 PACKAGE BODY fft_pckg IS 
-
-    
 
 END PACKAGE BODY fft_pckg;
