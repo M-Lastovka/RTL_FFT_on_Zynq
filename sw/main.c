@@ -19,8 +19,24 @@ int main()
 	XAxiDma_Config *dma_cfg;
 
 	s32 status;
-	u32 data_mm2s[DMA_TRANSFER_SIZE]; //data which gets sent to PS -> PL
-	u32 data_s2mm[DMA_TRANSFER_SIZE]; //data from PL which gets sent PL -> PS
+
+	u32 *data_mm2s = (u32 *)malloc(DMA_TRANSFER_SIZE * sizeof(u32));
+
+	if (data_mm2s == NULL)
+	{
+	     // Check if malloc failed to allocate memory
+	     printf("Memory allocation failed!\n");
+	     return XST_FAILURE;  // Return an error code
+	 }
+
+	u32 *data_s2mm = (u32 *)malloc(DMA_TRANSFER_SIZE * sizeof(u32));
+
+	if (data_s2mm == NULL)
+	{
+		// Check if malloc failed to allocate memory
+		printf("Memory allocation failed!\n");
+		return XST_FAILURE;  // Return an error code
+	}
 
 	Xil_DCacheDisable();
 
@@ -77,7 +93,7 @@ int main()
 		return XST_FAILURE;
 	}
 
-	print("PL->PS transfer started, waiting for transfer finish!\n");
+    print("PL->PS transfer started, waiting for transfer finish!\n");
 
 	//wait for some time
 	while(XAxiDma_Busy(&dma_driver, XAXIDMA_DEVICE_TO_DMA))
@@ -91,8 +107,11 @@ int main()
 	//print the received output
 	for(int i = 0; i < FFT_SIZE; i++)
 	{
-		xil_printf("@ addr: %d FFT: %d + j*d\n", i, data_s2mm[2*i], data_s2mm[2*i+1]);
+		xil_printf("@ addr: %d FFT: %d + j*%d\n", i, data_s2mm[2*i], data_s2mm[2*i+1]);
 	}
+
+	free(data_s2mm);
+	free(data_mm2s);
 
 	return XST_SUCCESS;
 }
